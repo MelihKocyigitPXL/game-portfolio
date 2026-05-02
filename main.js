@@ -1,13 +1,15 @@
 import kaplay from "kaplay";
 
 kaplay({
-    background: [10, 10, 20],
+    background: [5, 5, 15],
     font: "monospace",
+    width: 800,
+    height: 600,
+    letterbox: true,
 });
 
-// --- ASSETS & PLACEHOLDERS ---
+// --- ASSETS ---
 loadBean();
-loadSprite("hub-bg", "https://via.placeholder.com/800x600?text=Grand+Portfolio+Hall");
 
 const PORTFOLIO_DATA = [
     { id: "intro", title: "Voorstelling", color: [0, 255, 255], text: "Melih Kocyigit. Nieuwsgierige IT-student..." },
@@ -41,32 +43,22 @@ scene("menu", () => {
         color(255, 255, 255),
     ]);
 
-    // Button Interaction
-    btn.onHoverUpdate(() => {
-        btn.scale = vec2(1.1);
-        setCursor("pointer");
-    });
-
-    btn.onHoverEnd(() => {
-        btn.scale = vec2(1);
-        setCursor("default");
-    });
-
+    btn.onHoverUpdate(() => { btn.scale = vec2(1.1); setCursor("pointer"); });
+    btn.onHoverEnd(() => { btn.scale = vec2(1); setCursor("default"); });
     btn.onClick(() => go("cutscene"));
 });
 
 // --- SCENE: CUTSCENE ---
 scene("cutscene", () => {
     const t = add([
-        text("Entering the digital journey...", { size: 24 }),
+        text("Initializing World...", { size: 24 }),
         pos(width() / 2, height() / 2),
         anchor("center"),
         opacity(0),
     ]);
 
-    // Simple animation sequence
     tween(0, 1, 1, (val) => t.opacity = val, easings.easeInQuad).onEnd(() => {
-        wait(1, () => {
+        wait(0.5, () => {
             tween(1, 0, 1, (val) => t.opacity = val, easings.easeOutQuad).onEnd(() => {
                 go("hub");
             });
@@ -78,54 +70,105 @@ scene("cutscene", () => {
 scene("hub", () => {
     setGravity(0);
 
-    // Help UI
+    // 1. ADD SCENERY: Nebula Clouds
+    const nebulaColors = [
+        [40, 10, 50],  // Purple
+        [10, 20, 50],  // Deep Blue
+        [30, 0, 30],   // Magenta-ish
+    ];
+
+    for (let i = 0; i < 6; i++) {
+        add([
+            pos(rand(0, width()), rand(0, height())),
+            circle(rand(150, 300)),
+            color(nebulaColors[i % 3][0], nebulaColors[i % 3][1], nebulaColors[i % 3][2]),
+            opacity(0.25),
+            fixed(),
+            z(-2),
+        ]);
+    }
+
+    // Stars
+    for (let i = 0; i < 80; i++) {
+        add([
+            pos(rand(0, width()), rand(0, height())),
+            rect(rand(1, 3), rand(1, 3)),
+            color(255, 255, 255),
+            opacity(rand(0.2, 0.8)),
+            z(-1),
+        ]);
+    }
+
+    // --- ADD PLANET ---
+    const planetPos = vec2(width() * 0.8, height() * 0.2);
+    // Planet Base
     add([
-        text("USE ARROWS TO EXPLORE | TOUCH A PEDESTAL", { size: 16 }),
-        pos(20, 20),
+        circle(50),
+        pos(planetPos),
+        color(80, 120, 200), // Nice blue planet
+        z(-1.5),
+        fixed(),
+    ]);
+    // Planet Shadow (to make it look 3D)
+    add([
+        circle(50),
+        pos(planetPos.add(8, 8)),
+        color(5, 5, 20),
+        z(-1.4),
+        fixed(),
+    ]);
+    // Planet Ring
+    add([
+        rect(160, 2, { radius: 1 }),
+        pos(planetPos),
+        color(200, 200, 255),
+        opacity(0.3),
+        anchor("center"),
+        rotate(-25),
+        z(-1.6),
         fixed(),
     ]);
 
-    // The Hub Structure
+
+    // 2. HUB PORTALS
     PORTFOLIO_DATA.forEach((item, index) => {
         const x = 150 + (index % 3) * 250;
         const y = 200 + Math.floor(index / 3) * 250;
 
-        // Animated Pedestal
-        const pedestal = add([
-            rect(80, 40, { radius: 4 }),
+        const portal = add([
+            circle(40),
             pos(x, y),
-            color(40, 40, 60),
-            outline(2),
+            color(20, 20, 40),
+            outline(4, color(item.color[0], item.color[1], item.color[2])),
             area(),
             anchor("center"),
             "structure",
             { info: item }
         ]);
 
-        // Floating Title above pedestal
-        const label = add([
-            text(item.title.toUpperCase(), { size: 18 }),
-            pos(x, y - 60),
-            anchor("center"),
+        const swirl = add([
+            pos(x, y),
+            circle(30),
             color(item.color[0], item.color[1], item.color[2]),
+            opacity(0.3),
+            anchor("center"),
+            rotate(0),
         ]);
 
-        // "Pulse" Animation for the label to make it feel alive
         onUpdate(() => {
-            label.scale = vec2(1 + Math.sin(time() * 3) * 0.1);
+            swirl.angle += dt() * 100;
+            swirl.scale = vec2(1 + Math.sin(time() * 5) * 0.2);
         });
 
-        // Small floating orb on the pedestal
         add([
-            circle(12),
-            pos(x, y - 30),
-            color(item.color[0], item.color[1], item.color[2]),
+            text(item.title.toUpperCase(), { size: 18 }),
+            pos(x, y - 70),
             anchor("center"),
-            "orb"
+            color(item.color[0], item.color[1], item.color[2]),
         ]);
     });
 
-    // Player
+    // 3. PLAYER
     const player = add([
         sprite("bean"),
         pos(width() / 2, height() - 100),
@@ -134,14 +177,13 @@ scene("hub", () => {
         anchor("center"),
     ]);
 
-    // Movement
-    const SPEED = 300;
+    const SPEED = 350;
     onKeyDown("left", () => player.move(-SPEED, 0));
     onKeyDown("right", () => player.move(SPEED, 0));
     onKeyDown("up", () => player.move(0, -SPEED));
     onKeyDown("down", () => player.move(0, SPEED));
 
-    // --- UI: BACKDROP (Dims the screen) ---
+    // 4. UI
     const backdrop = add([
         rect(width(), height()),
         pos(0, 0),
@@ -151,38 +193,36 @@ scene("hub", () => {
         z(90),
     ]);
 
-    // --- UI: MODAL ---
     const modal = add([
-        rect(width() - 100, 240, { radius: 12 }),
+        rect(width() - 100, 260, { radius: 12 }),
         pos(width() / 2, height() / 2),
         anchor("center"),
-        color(35, 35, 50), // Lighter, more distinct color
-        outline(4, color(200, 200, 255)), // Brighter outline
+        color(30, 30, 45),
+        outline(4, color(200, 200, 255)),
         fixed(),
         z(100),
-        opacity(0), // Start fully transparent
+        opacity(0),
     ]);
-
-    modal.hidden = true; // Also hide it initially
+    modal.hidden = true;
 
     const modalTitle = modal.add([
         text("", { size: 32 }),
-        pos(0, -70),
+        pos(0, -80),
         anchor("center"),
         color(150, 150, 255),
     ]);
 
     const modalText = modal.add([
         text("", { size: 20, width: width() - 150, align: "center", lineSpacing: 4 }),
-        pos(0, 40),
+        pos(0, 30),
         anchor("center"),
-        color(255, 255, 255), // Pure white for max contrast
+        color(255, 255, 255),
     ]);
 
     player.onCollide("structure", (s) => {
         modal.hidden = false;
         modal.opacity = 1;
-        backdrop.opacity = 0.7; // Dim the background
+        backdrop.opacity = 0.8;
         modalTitle.text = s.info.title;
         modalText.text = s.info.text;
     });
@@ -191,10 +231,7 @@ scene("hub", () => {
         modal.hidden = true;
         modal.opacity = 0;
         backdrop.opacity = 0;
-        modalTitle.text = "";
-        modalText.text = "";
     });
 });
 
-// Start the game at the menu
 go("menu");
