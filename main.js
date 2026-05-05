@@ -12,12 +12,54 @@ kaplay({
 loadBean();
 
 const PORTFOLIO_DATA = [
-    { id: "intro", title: "Voorstelling", color: [0, 255, 255], text: "Melih Kocyigit. Nieuwsgierige IT-student..." },
-    { id: "seminars", title: "Seminaries", color: [255, 255, 0], text: "8+ sessies gevolgd over o.a. .Net Aspire..." },
-    { id: "cyber", title: "Cybersecurity", color: [255, 0, 0], text: "Deelname aan CTF 2026. Focus op Forensics..." },
-    { id: "innovation", title: "Innovatieroute", color: [0, 255, 0], text: "Application Integration bij Cornerbrix..." },
-    { id: "fosdem", title: "Fosdem 2026", color: [255, 0, 255], text: "Internationaal Open Source event..." },
-    { id: "reflection", title: "Reflectie", color: [255, 255, 255], text: "Klaar voor de IT-toekomst!" },
+    { 
+        id: "intro", 
+        title: "Voorstelling", 
+        color: [0, 255, 255], 
+        text: "Mijn nieuwsgierigheid is mijn drijfveer. Ik sta vaak stil bij ervaringen om de kern te begrijpen. Uit mijn Thalento-rapport bleek mijn sterke aanpassingsvermogen: ik neem de leiding wanneer nodig, maar kan ook perfect bijsturen als teamlid. Mijn doel? IT-oplossingen bouwen met maatschappelijke waarde, zoals platformen die mensen echt helpen.",
+        flair: "Curiosity: MAX | Adaptability: HIGH",
+        type: "atmospheric"
+    },
+    { 
+        id: "seminars", 
+        title: "Seminaries", 
+        color: [255, 255, 0], 
+        text: "Een reis door de IT-wereld: van .Net Aspire microservices en AWS cloud-automatisatie tot de dieptes van React state management en Three.js 3D rendering. Ik leerde over Zero Trust security, AI-gestuurd testen met Postman, en hoe Microsoft Fabric datawarehousing transformeert. Deze sessies gaven me de 'confidence boost' dat ik complexe tech echt kan doorgronden.",
+        flair: "Full Stack Knowledge | 8+ Specialized Sessions",
+        type: "grid"
+    },
+    { 
+        id: "cyber", 
+        title: "Cybersecurity", 
+        color: [255, 0, 0], 
+        text: "De Cybersecurity Challenge 2026 testte mijn grenzen. In de categorie Forensics kraakte ik een verborgen AES-sleutel in een afbeelding met een custom Python-script (PyCryptodome). Ondanks de eenzamere individuele setup dit jaar, bewees mijn doorzettingsvermogen dat ik ook onder druk en met beperkte stage-tijd complexe puzzels kan oplossen.",
+        flair: "> [STATUS: DECRYPTED] | AES-CBC | Python",
+        type: "terminal"
+    },
+    { 
+        id: "innovation", 
+        title: "Innovatieroute", 
+        color: [0, 255, 0], 
+        text: "Bij Cornerbrix dook ik in Application Integration. We transformerde point-to-point chaos naar schaalbare event-driven architectuur. Met Java, Maven en Docker bouwden we een festivalcase op Apache Kafka en Azure API Management. Het Exchange-object in Camel werd de centrale ruggengraat die 'spaghetti' verbindingen voorkwam.",
+        flair: "Kafka | Azure | Enterprise Integration",
+        type: "circuit"
+    },
+    { 
+        id: "fosdem", 
+        title: "FOSDEM 2026", 
+        color: [255, 0, 255], 
+        text: "Brussel, ULB: Ondergedompeld in de wereldwijde open-source community. Ik leerde over de gevaren van 'harvest now, decrypt later' in post-quantum crypto en zag live demo's van de ROSA fuzzing-tool voor backdoors. Het besef dat mijn basiskennis me toeliet om talks van wereldniveau te volgen, was een enorme professionele motivatie.",
+        flair: "Open Source | Post-Quantum Crypto | ROSA",
+        type: "crowd"
+    },
+    { 
+        id: "final", 
+        title: "Eindreflectie", 
+        color: [200, 200, 255], 
+        text: "Mijn tijd bij PXL was een transformatie. Ik ben niet meer de student van het begin; ik ben een professional die begrijpt dat groei zit in teamwerk en het verlaten van je comfortzone. Ik kijk positief terug op een traject waar mijn IT-kennis exponentieel groeide en ik klaarstoomde voor een carriere met echte impact. De toekomst is een kans die ik met beide handen grijp.",
+        flair: "TRANSFORMATION COMPLETE | PXL 2026",
+        type: "shimmer"
+    },
 ];
 
 // --- SCENE: MAIN MENU ---
@@ -33,7 +75,7 @@ scene("menu", () => {
         pos(width() / 2, height() / 2 + 50),
         area(),
         anchor("center"),
-        outline(4),
+        outline(4, rgb(255, 255, 255)),
         color(100, 100, 255),
     ]);
 
@@ -43,8 +85,6 @@ scene("menu", () => {
         color(255, 255, 255),
     ]);
 
-    btn.onHoverUpdate(() => { btn.scale = vec2(1.1); setCursor("pointer"); });
-    btn.onHoverEnd(() => { btn.scale = vec2(1); setCursor("default"); });
     btn.onClick(() => go("cutscene"));
 });
 
@@ -70,21 +110,15 @@ scene("cutscene", () => {
 scene("hub", () => {
     setGravity(0);
 
-    // 1. ADD SCENERY: Nebula Clouds
-    const nebulaColors = [
-        [40, 10, 50],  // Purple
-        [10, 20, 50],  // Deep Blue
-        [30, 0, 30],   // Magenta-ish
-    ];
-
+    // 1. SCENERY: Nebula
+    const nebulaColors = [rgb(40, 10, 50), rgb(10, 20, 50), rgb(30, 0, 30)];
     for (let i = 0; i < 6; i++) {
         add([
             pos(rand(0, width()), rand(0, height())),
             circle(rand(150, 300)),
-            color(nebulaColors[i % 3][0], nebulaColors[i % 3][1], nebulaColors[i % 3][2]),
-            opacity(0.25),
-            fixed(),
-            z(-2),
+            color(nebulaColors[i % 3]),
+            opacity(0.2),
+            z(-10),
         ]);
     }
 
@@ -93,59 +127,20 @@ scene("hub", () => {
         add([
             pos(rand(0, width()), rand(0, height())),
             rect(rand(1, 3), rand(1, 3)),
-            color(255, 255, 255),
+            color(rgb(255, 255, 255)),
             opacity(rand(0.2, 0.8)),
-            z(-1),
+            z(-5),
         ]);
     }
 
-    // --- ADD PLANET ---
+    // Planet
     const planetPos = vec2(width() * 0.55, height() * 0.15);
+    add([circle(60), pos(planetPos), color(rgb(100, 150, 255)), opacity(0.15), z(-4)]);
+    add([rect(160, 4, { radius: 2 }), pos(planetPos), color(rgb(200, 220, 255)), opacity(0.4), anchor("center"), rotate(-25), z(-3)]);
+    add([circle(50), pos(planetPos), color(rgb(100, 160, 255)), outline(3, rgb(255, 255, 255)), z(-2)]);
+    add([circle(50), pos(planetPos.add(6, 6)), color(rgb(0, 0, 30)), opacity(0.6), z(-1)]);
 
-    // Planet Glow (Outer)
-    add([
-        circle(60),
-        pos(planetPos),
-        color(100, 150, 255),
-        opacity(0.15),
-        z(-1.7),
-        fixed(),
-    ]);
-
-    // Planet Ring
-    add([
-        rect(160, 4, { radius: 2 }),
-        pos(planetPos),
-        color(200, 220, 255),
-        opacity(0.4),
-        anchor("center"),
-        rotate(-25),
-        z(-1.6),
-        fixed(),
-    ]);
-
-    // Planet Base
-    add([
-        circle(50),
-        pos(planetPos),
-        color(100, 160, 255), // Brighter blue
-        outline(3, color(255, 255, 255)), // White outline for contrast
-        z(-1.5),
-        fixed(),
-    ]);
-
-    // Planet Shadow
-    add([
-        circle(50),
-        pos(planetPos.add(6, 6)),
-        color(0, 0, 30),
-        opacity(0.6),
-        z(-1.4),
-        fixed(),
-    ]);
-
-
-    // 2. HUB PORTALS (Arranged in columns to leave middle open)
+    // 2. PORTALS
     PORTFOLIO_DATA.forEach((item, index) => {
         const side = index % 2 === 0 ? -1 : 1;
         const x = width() / 2 + (side * 350);
@@ -154,8 +149,8 @@ scene("hub", () => {
         const portal = add([
             circle(40),
             pos(x, y),
-            color(20, 20, 40),
-            outline(4, color(item.color[0], item.color[1], item.color[2])),
+            color(rgb(20, 20, 40)),
+            outline(4, rgb(item.color[0], item.color[1], item.color[2])),
             area(),
             anchor("center"),
             "structure",
@@ -165,13 +160,13 @@ scene("hub", () => {
         const swirl = add([
             pos(x, y),
             circle(30),
-            color(item.color[0], item.color[1], item.color[2]),
+            color(rgb(item.color[0], item.color[1], item.color[2])),
             opacity(0.3),
             anchor("center"),
             rotate(0),
         ]);
 
-        onUpdate(() => {
+        swirl.onUpdate(() => {
             swirl.angle += dt() * 100;
             swirl.scale = vec2(1 + Math.sin(time() * 5) * 0.2);
         });
@@ -180,49 +175,53 @@ scene("hub", () => {
             text(item.title.toUpperCase(), { size: 18 }),
             pos(x, y - 70),
             anchor("center"),
-            color(item.color[0], item.color[1], item.color[2]),
+            color(rgb(item.color[0], item.color[1], item.color[2])),
         ]);
     });
 
-    // 3. PLAYER (Spawn in the middle)
+    // 3. PLAYER
     const player = add([
         sprite("bean"),
         pos(width() / 2, height() / 2),
         area(),
-        body(),
         anchor("center"),
+        { activePortal: null }
     ]);
 
-    const SPEED = 350;
+    const SPEED = 400;
     onKeyDown("left", () => player.move(-SPEED, 0));
     onKeyDown("right", () => player.move(SPEED, 0));
     onKeyDown("up", () => player.move(0, -SPEED));
     onKeyDown("down", () => player.move(0, SPEED));
 
-    // 4. TELEPORTATION EFFECT
+    const prompt = add([
+        text("", { size: 16 }),
+        pos(width() / 2, height() - 50),
+        anchor("center"),
+        fixed(),
+    ]);
+
     player.onCollide("structure", (s) => {
-        player.paused = true;
-        shake(10);
+        player.activePortal = s;
+        prompt.text = `Press E to enter ${s.info.title}`;
+    });
 
-        const flash = add([
-            rect(width(), height()),
-            pos(0, 0),
-            color(s.info.color[0], s.info.color[1], s.info.color[2]),
-            opacity(0),
-            fixed(),
-            z(100),
-        ]);
+    player.onCollideEnd("structure", () => {
+        player.activePortal = null;
+        prompt.text = "";
+    });
 
-        tween(0, 1, 0.5, (val) => flash.opacity = val, easings.easeInQuad).onEnd(() => {
-            go("detail", s.info);
-        });
+    onUpdate(() => {
+        if (player.activePortal && isKeyPressed("e")) {
+            go("detail", player.activePortal.info);
+        }
     });
 
     // Fade in
     const fadeIn = add([
         rect(width(), height()),
         pos(0, 0),
-        color(0, 0, 0),
+        color(rgb(0, 0, 0)),
         opacity(1),
         fixed(),
         z(100),
@@ -234,106 +233,144 @@ scene("hub", () => {
 scene("detail", (info) => {
     setGravity(0);
     
-    add([
-        rect(width(), height()),
-        pos(0, 0),
-        color(info.color[0] * 0.1, info.color[1] * 0.1, info.color[2] * 0.1),
-        fixed(),
-        z(-2),
-    ]);
+    // 1. BACKGROUND
+    const bgColor = rgb(
+        Math.floor(info.color[0] * 0.1),
+        Math.floor(info.color[1] * 0.1),
+        Math.floor(info.color[2] * 0.1)
+    );
+    add([rect(width(), height()), pos(0, 0), color(bgColor), fixed(), z(-20)]);
 
-    for (let i = 0; i < 100; i++) {
-        add([
-            pos(rand(0, width()), rand(0, height())),
-            rect(rand(1, 3), rand(1, 3)),
-            color(info.color[0], info.color[1], info.color[2]),
-            opacity(rand(0.1, 0.5)),
-            fixed(),
-            z(-1),
-        ]);
+    // TYPE-SPECIFIC EFFECTS
+    if (info.type === "terminal") {
+        onUpdate(() => {
+            if (chance(0.1)) {
+                add([
+                    pos(rand(0, width()), 0),
+                    text(choose(["0", "1", "<", ">", "/", "_"]), { size: 16 }),
+                    color(rgb(0, 255, 0)),
+                    opacity(0.3),
+                    move(vec2(0, 1), rand(100, 300)),
+                    lifespan(3),
+                    z(-5),
+                ]);
+            }
+        });
+    } else if (info.type === "circuit") {
+        for (let x = 0; x < width(); x += 60) {
+            for (let y = 0; y < height(); y += 60) {
+                add([pos(x, y), circle(2), color(rgb(info.color[0], info.color[1], info.color[2])), opacity(0.1), z(-5)]);
+            }
+        }
+    } else if (info.type === "crowd") {
+        for (let i = 0; i < 15; i++) {
+            const b = add([
+                sprite("bean"),
+                pos(rand(0, width()), rand(0, height())),
+                scale(0.4),
+                opacity(0.15),
+                z(-5),
+                anchor("center"),
+                { dir: vec2(rand(-1, 1), rand(-1, 1)).unit() }
+            ]);
+            b.onUpdate(() => {
+                b.move(b.dir.scale(40));
+                if (b.pos.x < 0 || b.pos.x > width()) b.dir.x *= -1;
+                if (b.pos.y < 0 || b.pos.y > height()) b.dir.y *= -1;
+            });
+        }
+    } else {
+        for (let i = 0; i < 60; i++) {
+            add([pos(rand(0, width()), rand(0, height())), rect(2, 2), color(rgb(info.color[0], info.color[1], info.color[2])), opacity(0.2), z(-5)]);
+        }
     }
 
-    const margin = 40;
-    add([
-        rect(width() - margin * 2, height() - margin * 2, { radius: 8 }),
-        pos(margin, margin),
-        outline(2, color(info.color[0], info.color[1], info.color[2])),
-        color(0, 0, 0, 0),
-    ]);
-
+    // 2. MONUMENT
     const monument = add([
-        rect(width() * 0.7, 300, { radius: 12 }),
-        pos(width() / 2, height() / 2 - 50),
+        rect(width() * 0.85, 480, { radius: 12 }),
+        pos(width() / 2, height() / 2 - 20),
         anchor("center"),
-        color(20, 20, 30),
-        outline(4, color(info.color[0], info.color[1], info.color[2])),
-        area(),
+        color(rgb(20, 20, 30)),
+        outline(4, rgb(info.color[0], info.color[1], info.color[2])),
     ]);
 
     monument.add([
         text(info.title.toUpperCase(), { size: 36 }),
-        pos(0, -100),
+        pos(0, -190),
         anchor("center"),
-        color(info.color[0], info.color[1], info.color[2]),
+        color(rgb(info.color[0], info.color[1], info.color[2])),
     ]);
 
     monument.add([
-        text(info.text, { size: 20, width: width() * 0.6, align: "center", lineSpacing: 6 }),
-        pos(0, 20),
+        text(info.text, { size: 19, width: width() * 0.75, align: "center", lineSpacing: 8 }),
+        pos(0, 0),
         anchor("center"),
-        color(255, 255, 255),
+        color(rgb(255, 255, 255)),
     ]);
 
+    monument.add([
+        text(info.flair, { size: 15 }),
+        pos(0, 200),
+        anchor("center"),
+        color(rgb(info.color[0], info.color[1], info.color[2])),
+        opacity(0.8),
+    ]);
+
+    // 3. PLAYER
     const player = add([
         sprite("bean"),
-        pos(width() / 2, height() - 100),
+        pos(width() / 2, height() - 140),
         area(),
-        body(),
         anchor("center"),
+        z(10),
     ]);
 
-    const SPEED = 300;
+    const SPEED = 400;
     onKeyDown("left", () => player.move(-SPEED, 0));
     onKeyDown("right", () => player.move(SPEED, 0));
     onKeyDown("up", () => player.move(0, -SPEED));
     onKeyDown("down", () => player.move(0, SPEED));
 
+    // 4. RETURN
     const returnPortal = add([
-        circle(30),
-        pos(width() / 2, height() - 40),
-        color(20, 20, 40),
-        outline(4, color(255, 255, 255)),
+        circle(28),
+        pos(width() / 2, height() - 35),
+        color(rgb(40, 40, 60)),
+        outline(3, rgb(255, 255, 255)),
         area(),
         anchor("center"),
         "return",
     ]);
 
-    returnPortal.add([
-        text("RETURN", { size: 12 }),
-        pos(0, -40),
+    const returnPrompt = add([
+        text("", { size: 14 }),
+        pos(width() / 2, height() - 85),
         anchor("center"),
+        fixed(),
     ]);
 
+    let onReturn = false;
     player.onCollide("return", () => {
-        player.paused = true;
-        const flash = add([
-            rect(width(), height()),
-            pos(0, 0),
-            color(0, 0, 0),
-            opacity(0),
-            fixed(),
-            z(100),
-        ]);
-
-        tween(0, 1, 0.4, (val) => flash.opacity = val, easings.easeInQuad).onEnd(() => {
-            go("hub");
-        });
+        onReturn = true;
+        returnPrompt.text = "Press E to Return";
     });
 
+    player.onCollideEnd("return", () => {
+        onReturn = false;
+        returnPrompt.text = "";
+    });
+
+    onUpdate(() => {
+        if (onReturn && isKeyPressed("e")) {
+            go("hub");
+        }
+    });
+
+    // 5. FADE IN
     const fadeIn = add([
         rect(width(), height()),
         pos(0, 0),
-        color(info.color[0], info.color[1], info.color[2]),
+        color(rgb(info.color[0], info.color[1], info.color[2])),
         opacity(1),
         fixed(),
         z(100),
