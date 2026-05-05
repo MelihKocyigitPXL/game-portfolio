@@ -48,17 +48,17 @@ const PORTFOLIO_DATA = [
         id: "fosdem", 
         title: "FOSDEM 2026", 
         color: [255, 0, 255], 
-        text: "Brussel, ULB: Ondergedompeld in de wereldwijde open-source community. Ik leerde over de gevaren van 'harvest now, decrypt later' in post-quantum crypto en zag live demo's van de ROSA fuzzing-tool voor backdoors. Het besef dat mijn basiskennis me toeliet om talks van wereldniveau te volgen, was een enorme professionele motivatie.",
+        text: "Brussel, ULB: Ondergedompeld in de wereldwijde open-source community. Ik leerde over de gevaren van 'harvest now, decrypt later' in post-quantum crypto en zag live demo's van de ROSA fuzzing-tool for backdoors. Het besef dat mijn basiskennis me toeliet om talks van wereldniveau te volgen, was een enorme professionele motivatie.",
         flair: "Open Source | Post-Quantum Crypto | ROSA",
         type: "crowd"
     },
     { 
-        id: "final", 
+        id: "reflection", 
         title: "Eindreflectie", 
-        color: [200, 200, 255], 
-        text: "Mijn tijd bij PXL was een transformatie. Ik ben niet meer de student van het begin; ik ben een professional die begrijpt dat groei zit in teamwerk en het verlaten van je comfortzone. Ik kijk positief terug op een traject waar mijn IT-kennis exponentieel groeide en ik klaarstoomde voor een carriere met echte impact. De toekomst is een kans die ik met beide handen grijp.",
-        flair: "TRANSFORMATION COMPLETE | PXL 2026",
-        type: "shimmer"
+        color: [255, 255, 255], 
+        text: "Mijn tijd bij PXL was een transformatie. Ik ben niet meer de student van het begin; ik ben een professional die begrijpt dat groei zit in teamwerk en het verlaten van je comfortzone. Ik kijk positief terug op een traject waar mijn IT-kennis exponentieel groeide en ik klaarstoomde voor een carriere met echte impact.",
+        flair: "GROWTH: EXPONENTIAL | LEVEL UP",
+        type: "graph"
     },
 ];
 
@@ -117,7 +117,8 @@ scene("hub", () => {
             pos(rand(0, width()), rand(0, height())),
             circle(rand(150, 300)),
             color(nebulaColors[i % 3]),
-            opacity(0.2),
+            opacity(0.25),
+            fixed(),
             z(-10),
         ]);
     }
@@ -241,6 +242,40 @@ scene("detail", (info) => {
     );
     add([rect(width(), height()), pos(0, 0), color(bgColor), fixed(), z(-20)]);
 
+    // 2. MONUMENT (Initial invisible)
+    const monument = add([
+        rect(width() * 0.85, 480, { radius: 12 }),
+        pos(width() / 2, height() / 2 - 20),
+        anchor("center"),
+        color(rgb(20, 20, 30)),
+        outline(4, rgb(info.color[0], info.color[1], info.color[2])),
+        opacity(info.type === "graph" ? 0 : 1),
+    ]);
+
+    const monumentTitle = monument.add([
+        text(info.title.toUpperCase(), { size: 36 }),
+        pos(0, -190),
+        anchor("center"),
+        color(rgb(info.color[0], info.color[1], info.color[2])),
+        opacity(info.type === "graph" ? 0 : 1),
+    ]);
+
+    const monumentBody = monument.add([
+        text(info.text, { size: 19, width: width() * 0.75, align: "center", lineSpacing: 8 }),
+        pos(0, 0),
+        anchor("center"),
+        color(rgb(255, 255, 255)),
+        opacity(info.type === "graph" ? 0 : 1),
+    ]);
+
+    const monumentFlair = monument.add([
+        text(info.flair, { size: 15 }),
+        pos(0, 200),
+        anchor("center"),
+        color(rgb(info.color[0], info.color[1], info.color[2])),
+        opacity(info.type === "graph" ? 0 : 0.8),
+    ]);
+
     // TYPE-SPECIFIC EFFECTS
     if (info.type === "terminal") {
         onUpdate(() => {
@@ -256,6 +291,99 @@ scene("detail", (info) => {
                 ]);
             }
         });
+    } else if (info.type === "graph") {
+        // GROWTH GRAPH CUTSCENE
+        const graphW = 500;
+        const graphH = 300;
+        const origin = vec2(width() / 2 - graphW / 2, height() / 2 + 100);
+
+        // Axes
+        const xAxis = add([
+            rect(graphW, 4),
+            pos(origin),
+            color(rgb(255, 255, 255)),
+            opacity(0),
+            z(2),
+        ]);
+        const yAxis = add([
+            rect(4, graphH),
+            pos(origin.x, origin.y - graphH),
+            color(rgb(255, 255, 255)),
+            opacity(0),
+            z(2),
+        ]);
+        const graphPoints = [];
+        const graphLabels = [];
+
+        const labels = [
+            { t: "START", x: 0, shown: false },
+            { t: "LEARNING", x: 0.3, shown: false },
+            { t: "PXL", x: 0.7, shown: false },
+            { t: "PRO", x: 1.0, shown: false },
+        ];
+
+        tween(0, 1, 0.8, (v) => {
+            xAxis.opacity = v;
+            yAxis.opacity = v;
+        }, easings.easeOutQuad).onEnd(() => {
+            let lastStep = -1;
+            const totalSteps = 140;
+
+            tween(0, 1, 2.4, (progress) => {
+                const step = Math.floor(progress * totalSteps);
+
+                // Draw only newly reached points each frame
+                for (let i = lastStep + 1; i <= step; i++) {
+                    const p = i / totalSteps;
+                    const currX = p * graphW;
+                    const currY = Math.pow(p, 2.5) * graphH;
+
+                    const point = add([
+                        rect(6, 6),
+                        pos(origin.x + currX, origin.y - currY),
+                        color(rgb(100, 255, 100)),
+                        anchor("center"),
+                        z(3),
+                    ]);
+                    graphPoints.push(point);
+                }
+                lastStep = step;
+
+                labels.forEach((l) => {
+                    if (progress >= l.x && !l.shown) {
+                        l.shown = true;
+                        const label = add([
+                            text(l.t, { size: 14 }),
+                            pos(origin.x + l.x * graphW, origin.y + 20),
+                            anchor("center"),
+                            color(rgb(150, 150, 250)),
+                            z(4),
+                        ]);
+                        graphLabels.push(label);
+                    }
+                });
+            }, easings.linear).onEnd(() => {
+                wait(0.6, () => {
+                    tween(0, 1, 1, (v) => {
+                        monument.opacity = v;
+                        monumentTitle.opacity = v;
+                        monumentBody.opacity = v;
+                        monumentFlair.opacity = v * 0.8;
+
+                        xAxis.opacity = 1 - v;
+                        yAxis.opacity = 1 - v;
+                        graphPoints.forEach((point) => point.opacity = 1 - v);
+                        graphLabels.forEach((label) => label.opacity = 1 - v);
+                    }, easings.easeOutQuad).onEnd(() => {
+                        graphPoints.forEach((point) => destroy(point));
+                        graphLabels.forEach((label) => destroy(label));
+                        destroy(xAxis);
+                        destroy(yAxis);
+                    });
+                });
+            });
+        });
+
     } else if (info.type === "circuit") {
         for (let x = 0; x < width(); x += 60) {
             for (let y = 0; y < height(); y += 60) {
@@ -284,37 +412,6 @@ scene("detail", (info) => {
             add([pos(rand(0, width()), rand(0, height())), rect(2, 2), color(rgb(info.color[0], info.color[1], info.color[2])), opacity(0.2), z(-5)]);
         }
     }
-
-    // 2. MONUMENT
-    const monument = add([
-        rect(width() * 0.85, 480, { radius: 12 }),
-        pos(width() / 2, height() / 2 - 20),
-        anchor("center"),
-        color(rgb(20, 20, 30)),
-        outline(4, rgb(info.color[0], info.color[1], info.color[2])),
-    ]);
-
-    monument.add([
-        text(info.title.toUpperCase(), { size: 36 }),
-        pos(0, -190),
-        anchor("center"),
-        color(rgb(info.color[0], info.color[1], info.color[2])),
-    ]);
-
-    monument.add([
-        text(info.text, { size: 19, width: width() * 0.75, align: "center", lineSpacing: 8 }),
-        pos(0, 0),
-        anchor("center"),
-        color(rgb(255, 255, 255)),
-    ]);
-
-    monument.add([
-        text(info.flair, { size: 15 }),
-        pos(0, 200),
-        anchor("center"),
-        color(rgb(info.color[0], info.color[1], info.color[2])),
-        opacity(0.8),
-    ]);
 
     // 3. PLAYER
     const player = add([
