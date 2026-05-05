@@ -3,8 +3,8 @@ import kaplay from "kaplay";
 kaplay({
     background: [5, 5, 15],
     font: "monospace",
-    width: 800,
-    height: 600,
+    width: 1000,
+    height: 700,
     letterbox: true,
 });
 
@@ -100,40 +100,56 @@ scene("hub", () => {
     }
 
     // --- ADD PLANET ---
-    const planetPos = vec2(width() * 0.8, height() * 0.2);
-    // Planet Base
+    const planetPos = vec2(width() * 0.55, height() * 0.15);
+
+    // Planet Glow (Outer)
     add([
-        circle(50),
+        circle(60),
         pos(planetPos),
-        color(80, 120, 200), // Nice blue planet
-        z(-1.5),
+        color(100, 150, 255),
+        opacity(0.15),
+        z(-1.7),
         fixed(),
     ]);
-    // Planet Shadow (to make it look 3D)
-    add([
-        circle(50),
-        pos(planetPos.add(8, 8)),
-        color(5, 5, 20),
-        z(-1.4),
-        fixed(),
-    ]);
+
     // Planet Ring
     add([
-        rect(160, 2, { radius: 1 }),
+        rect(160, 4, { radius: 2 }),
         pos(planetPos),
-        color(200, 200, 255),
-        opacity(0.3),
+        color(200, 220, 255),
+        opacity(0.4),
         anchor("center"),
         rotate(-25),
         z(-1.6),
         fixed(),
     ]);
 
+    // Planet Base
+    add([
+        circle(50),
+        pos(planetPos),
+        color(100, 160, 255), // Brighter blue
+        outline(3, color(255, 255, 255)), // White outline for contrast
+        z(-1.5),
+        fixed(),
+    ]);
 
-    // 2. HUB PORTALS
+    // Planet Shadow
+    add([
+        circle(50),
+        pos(planetPos.add(6, 6)),
+        color(0, 0, 30),
+        opacity(0.6),
+        z(-1.4),
+        fixed(),
+    ]);
+
+
+    // 2. HUB PORTALS (Arranged in columns to leave middle open)
     PORTFOLIO_DATA.forEach((item, index) => {
-        const x = 150 + (index % 3) * 250;
-        const y = 200 + Math.floor(index / 3) * 250;
+        const side = index % 2 === 0 ? -1 : 1;
+        const x = width() / 2 + (side * 350);
+        const y = 150 + Math.floor(index / 2) * 200;
 
         const portal = add([
             circle(40),
@@ -168,10 +184,10 @@ scene("hub", () => {
         ]);
     });
 
-    // 3. PLAYER
+    // 3. PLAYER (Spawn in the middle)
     const player = add([
         sprite("bean"),
-        pos(width() / 2, height() - 100),
+        pos(width() / 2, height() / 2),
         area(),
         body(),
         anchor("center"),
@@ -183,55 +199,146 @@ scene("hub", () => {
     onKeyDown("up", () => player.move(0, -SPEED));
     onKeyDown("down", () => player.move(0, SPEED));
 
-    // 4. UI
-    const backdrop = add([
+    // 4. TELEPORTATION EFFECT
+    player.onCollide("structure", (s) => {
+        player.paused = true;
+        shake(10);
+
+        const flash = add([
+            rect(width(), height()),
+            pos(0, 0),
+            color(s.info.color[0], s.info.color[1], s.info.color[2]),
+            opacity(0),
+            fixed(),
+            z(100),
+        ]);
+
+        tween(0, 1, 0.5, (val) => flash.opacity = val, easings.easeInQuad).onEnd(() => {
+            go("detail", s.info);
+        });
+    });
+
+    // Fade in
+    const fadeIn = add([
         rect(width(), height()),
         pos(0, 0),
         color(0, 0, 0),
-        opacity(0),
-        fixed(),
-        z(90),
-    ]);
-
-    const modal = add([
-        rect(width() - 100, 260, { radius: 12 }),
-        pos(width() / 2, height() / 2),
-        anchor("center"),
-        color(30, 30, 45),
-        outline(4, color(200, 200, 255)),
+        opacity(1),
         fixed(),
         z(100),
-        opacity(0),
     ]);
-    modal.hidden = true;
+    tween(1, 0, 0.5, (val) => fadeIn.opacity = val, easings.easeOutQuad);
+});
 
-    const modalTitle = modal.add([
-        text("", { size: 32 }),
-        pos(0, -80),
+// --- SCENE: DETAIL AREA ---
+scene("detail", (info) => {
+    setGravity(0);
+    
+    add([
+        rect(width(), height()),
+        pos(0, 0),
+        color(info.color[0] * 0.1, info.color[1] * 0.1, info.color[2] * 0.1),
+        fixed(),
+        z(-2),
+    ]);
+
+    for (let i = 0; i < 100; i++) {
+        add([
+            pos(rand(0, width()), rand(0, height())),
+            rect(rand(1, 3), rand(1, 3)),
+            color(info.color[0], info.color[1], info.color[2]),
+            opacity(rand(0.1, 0.5)),
+            fixed(),
+            z(-1),
+        ]);
+    }
+
+    const margin = 40;
+    add([
+        rect(width() - margin * 2, height() - margin * 2, { radius: 8 }),
+        pos(margin, margin),
+        outline(2, color(info.color[0], info.color[1], info.color[2])),
+        color(0, 0, 0, 0),
+    ]);
+
+    const monument = add([
+        rect(width() * 0.7, 300, { radius: 12 }),
+        pos(width() / 2, height() / 2 - 50),
         anchor("center"),
-        color(150, 150, 255),
+        color(20, 20, 30),
+        outline(4, color(info.color[0], info.color[1], info.color[2])),
+        area(),
     ]);
 
-    const modalText = modal.add([
-        text("", { size: 20, width: width() - 150, align: "center", lineSpacing: 4 }),
-        pos(0, 30),
+    monument.add([
+        text(info.title.toUpperCase(), { size: 36 }),
+        pos(0, -100),
+        anchor("center"),
+        color(info.color[0], info.color[1], info.color[2]),
+    ]);
+
+    monument.add([
+        text(info.text, { size: 20, width: width() * 0.6, align: "center", lineSpacing: 6 }),
+        pos(0, 20),
         anchor("center"),
         color(255, 255, 255),
     ]);
 
-    player.onCollide("structure", (s) => {
-        modal.hidden = false;
-        modal.opacity = 1;
-        backdrop.opacity = 0.8;
-        modalTitle.text = s.info.title;
-        modalText.text = s.info.text;
+    const player = add([
+        sprite("bean"),
+        pos(width() / 2, height() - 100),
+        area(),
+        body(),
+        anchor("center"),
+    ]);
+
+    const SPEED = 300;
+    onKeyDown("left", () => player.move(-SPEED, 0));
+    onKeyDown("right", () => player.move(SPEED, 0));
+    onKeyDown("up", () => player.move(0, -SPEED));
+    onKeyDown("down", () => player.move(0, SPEED));
+
+    const returnPortal = add([
+        circle(30),
+        pos(width() / 2, height() - 40),
+        color(20, 20, 40),
+        outline(4, color(255, 255, 255)),
+        area(),
+        anchor("center"),
+        "return",
+    ]);
+
+    returnPortal.add([
+        text("RETURN", { size: 12 }),
+        pos(0, -40),
+        anchor("center"),
+    ]);
+
+    player.onCollide("return", () => {
+        player.paused = true;
+        const flash = add([
+            rect(width(), height()),
+            pos(0, 0),
+            color(0, 0, 0),
+            opacity(0),
+            fixed(),
+            z(100),
+        ]);
+
+        tween(0, 1, 0.4, (val) => flash.opacity = val, easings.easeInQuad).onEnd(() => {
+            go("hub");
+        });
     });
 
-    player.onCollideEnd("structure", () => {
-        modal.hidden = true;
-        modal.opacity = 0;
-        backdrop.opacity = 0;
-    });
+    const fadeIn = add([
+        rect(width(), height()),
+        pos(0, 0),
+        color(info.color[0], info.color[1], info.color[2]),
+        opacity(1),
+        fixed(),
+        z(100),
+    ]);
+    tween(1, 0, 0.6, (val) => fadeIn.opacity = val, easings.easeOutQuad);
 });
 
 go("menu");
