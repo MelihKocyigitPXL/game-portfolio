@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  base: '/game-portfolio/',
+  base: process.env.GITHUB_PAGES === 'true' ? '/game-portfolio/' : '/',
 })
