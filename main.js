@@ -1,4 +1,5 @@
 import kaplay from "kaplay";
+import ferreImg from "./assets/ferre.png";
 
 kaplay({
     background: [5, 5, 15],
@@ -10,6 +11,18 @@ kaplay({
 
 // --- ASSETS ---
 loadBean();
+loadSprite("ferre", ferreImg);
+
+loadShader("circleMask", null, `
+    vec4 frag(vec2 uv, vec2 pos, vec4 color, sampler2D tex) {
+        vec4 texColor = texture2D(tex, uv);
+        float dist = distance(uv, vec2(0.5, 0.5));
+        if (dist > 0.5) {
+            discard;
+        }
+        return texColor * color;
+    }
+`);
 
 const PORTFOLIO_DATA = [
     { 
@@ -59,6 +72,14 @@ const PORTFOLIO_DATA = [
         text: "Mijn tijd bij PXL was een transformatie. Ik ben niet meer de student van het begin; ik ben een professional die begrijpt dat groei zit in teamwerk en het verlaten van je comfortzone. Ik kijk positief terug op een traject waar mijn IT-kennis exponentieel groeide en ik klaarstoomde voor een carriere met echte impact.",
         flair: "GROWTH: EXPONENTIAL | LEVEL UP",
         type: "graph"
+    },
+    {
+        id: "testimonials",
+        title: "Testimonials",
+        color: [200, 100, 255],
+        text: "Wat anderen over mij zeggen. Interacteer met de personen in de kamer om hun testimonials te horen.",
+        flair: "Feedback | Recommendations",
+        type: "npc_room"
     },
 ];
 
@@ -155,7 +176,7 @@ scene("hub", () => {
     PORTFOLIO_DATA.forEach((item, index) => {
         const side = index % 2 === 0 ? -1 : 1;
         const x = width() / 2 + (side * 350);
-        const y = 150 + Math.floor(index / 2) * 200;
+        const y = 120 + Math.floor(index / 2) * 160;
 
         const portal = add([
             circle(40),
@@ -236,7 +257,11 @@ scene("hub", () => {
 
     onUpdate(() => {
         if (player.activePortal && isKeyPressed("e")) {
-            go("detail", player.activePortal.info);
+            if (player.activePortal.info.id === "testimonials") {
+                go("testimonials", player.activePortal.info);
+            } else {
+                go("detail", player.activePortal.info);
+            }
         } else if (player.onPlanetEgg && isKeyPressed("f")) {
             go("planet_easter_egg");
         }
@@ -818,6 +843,183 @@ scene("detail", (info) => {
         z(100),
     ]);
     tween(1, 0, 0.6, (val) => fadeIn.opacity = val, easings.easeOutQuad);
+});
+
+// --- SCENE: TESTIMONIALS ROOM ---
+scene("testimonials", (info) => {
+    setGravity(0);
+    add([rect(width(), height()), pos(0, 0), color(rgb(20, 10, 30)), fixed(), z(-20)]);
+
+    // Room boundaries or just a general space
+    add([
+        text("TESTIMONIALS ROOM", { size: 24 }),
+        pos(width() / 2, 40),
+        anchor("center"),
+        color(rgb(200, 100, 255)),
+    ]);
+
+    const npcs = [
+        { name: "Cas", pos: vec2(width() * 0.25, height() / 2), color: rgb(100, 200, 255), testimonial: "Cas: 'Ik heb hem leren kennen als iemand die betrouwbaar is en zijn werk met de nodige zorg en toewijding uitvoert. Hij werkt gestructureerd, denkt mee en is een aangename persoon om mee samen te werken.'" },
+        { name: "Safri", pos: vec2(width() * 0.5, height() / 2), color: rgb(255, 150, 100), url: "https://www.sarbjitsingh.be/", testimonial: "Safri: 'Ik waardeer aan jou dat je veel mee bent met wat er in de wereld gebeurt en daar ook boeiend over kan vertellen. Je brengt interessante inzichten en nieuwe ideeën in de groep, en tegelijk maak je de sfeer vaak wat luchtiger.'" },
+        { name: "Ferre", pos: vec2(width() * 0.75, height() / 2), color: rgb(150, 255, 100), sprite: "ferre", testimonial: "Ferre: 'Hij is iemand die altijd 100% geeft en door die inzet weet je dat er altijd een resultaat gaat zijn waar je trots op kan zijn'" },
+    ];
+
+    npcs.forEach((n) => {
+        const base = add([
+            pos(n.pos),
+            anchor("center"),
+            area({ shape: new Rect(vec2(0), 60, 60) }),
+            "npc",
+            { testimonial: n.testimonial, name: n.name },
+            z(20),
+        ]);
+
+        if (n.url) {
+            const orb = add([
+                circle(12),
+                pos(n.pos),
+                color(n.color),
+                outline(2, rgb(255, 255, 255)),
+                area(),
+                anchor("center"),
+                z(25),
+                "web_link",
+                { url: n.url, owner: n.name }
+            ]);
+
+            orb.add([
+                text("WWW", { size: 8 }),
+                anchor("center"),
+                color(rgb(255, 255, 255)),
+            ]);
+
+            orb.onUpdate(() => {
+                const t = time() * 2;
+                orb.pos = n.pos.add(vec2(Math.cos(t) * 55, Math.sin(t) * 40));
+                orb.scale = vec2(1 + Math.sin(time() * 5) * 0.1);
+            });
+        }
+
+        if (n.sprite) {
+            // Create a masked container (shrunk to 60px diameter)
+            const maskContainer = base.add([
+                circle(30),
+                mask("intersect"),
+                anchor("center"),
+            ]);
+
+            // Add the sprite inside the mask
+            maskContainer.add([
+                sprite(n.sprite, { width: 60, height: 60 }),
+                anchor("center"),
+            ]);
+            
+            // Add a nice border
+            base.add([
+                circle(30),
+                anchor("center"),
+                outline(3, n.color),
+                color(rgb(0, 0, 0)),
+                opacity(0),
+                z(-1),
+            ]);
+        } else {
+            base.add([
+                sprite("bean"),
+                scale(0.8),
+                anchor("center"),
+                color(n.color),
+            ]);
+        }
+
+        add([
+            text(n.name, { size: 16 }),
+            pos(n.pos.x, n.pos.y - 50),
+            anchor("center"),
+            color(n.color),
+        ]);
+    });
+
+    const player = add([
+        sprite("bean"),
+        pos(width() / 2, height() - 150),
+        area(),
+        anchor("center"),
+        z(10),
+        { activeNPC: null }
+    ]);
+
+    const SPEED = 400;
+    onKeyDown("left", () => player.move(-SPEED, 0));
+    onKeyDown("right", () => player.move(SPEED, 0));
+    onKeyDown("up", () => player.move(0, -SPEED));
+    onKeyDown("down", () => player.move(0, SPEED));
+
+    const dialogueBox = add([
+        rect(width() * 0.8, 120, { radius: 8 }),
+        pos(width() / 2, height() - 80),
+        anchor("center"),
+        color(rgb(10, 10, 20)),
+        outline(3, rgb(200, 100, 255)),
+        opacity(0),
+        fixed(),
+        z(50),
+    ]);
+
+    const dialogueText = dialogueBox.add([
+        text("", { size: 18, width: width() * 0.7, lineSpacing: 8 }),
+        pos(0, 0),
+        anchor("center"),
+        color(rgb(255, 255, 255)),
+    ]);
+
+    const prompt = add([
+        text("", { size: 16 }),
+        pos(width() / 2, height() - 160),
+        anchor("center"),
+        fixed(),
+    ]);
+
+    player.onCollide("npc", (n) => {
+        player.activeNPC = n;
+        prompt.text = `Press E to talk to ${n.name}`;
+    });
+
+    player.onCollideEnd("npc", () => {
+        player.activeNPC = null;
+        prompt.text = "";
+        dialogueBox.opacity = 0;
+        dialogueText.text = "";
+    });
+
+    onUpdate(() => {
+        if (player.activeNPC && isKeyPressed("e")) {
+            dialogueBox.opacity = 1;
+            dialogueText.text = player.activeNPC.testimonial;
+            prompt.text = "";
+        }
+    });
+
+    // Return portal
+    const returnPortal = add([
+        circle(28),
+        pos(50, height() - 50),
+        color(rgb(40, 40, 60)),
+        outline(3, rgb(255, 255, 255)),
+        area(),
+        anchor("center"),
+        "return",
+    ]);
+
+    add([
+        text("EXIT", { size: 14 }),
+        pos(50, height() - 90),
+        anchor("center"),
+    ]);
+
+    player.onCollide("return", () => {
+        go("hub");
+    });
 });
 
 go("menu");
