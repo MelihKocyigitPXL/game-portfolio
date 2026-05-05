@@ -1,5 +1,4 @@
 import kaplay from "kaplay";
-import ferreImg from "./assets/ferre.png";
 
 kaplay({
     background: [5, 5, 15],
@@ -11,18 +10,6 @@ kaplay({
 
 // --- ASSETS ---
 loadBean();
-loadSprite("ferre", ferreImg);
-
-loadShader("circleMask", null, `
-    vec4 frag(vec2 uv, vec2 pos, vec4 color, sampler2D tex) {
-        vec4 texColor = texture2D(tex, uv);
-        float dist = distance(uv, vec2(0.5, 0.5));
-        if (dist > 0.5) {
-            discard;
-        }
-        return texColor * color;
-    }
-`);
 
 const PORTFOLIO_DATA = [
     { 
@@ -45,7 +32,7 @@ const PORTFOLIO_DATA = [
         id: "cyber", 
         title: "Cybersecurity", 
         color: [255, 0, 0], 
-        text: "De Cybersecurity Challenge 2026 testte mijn grenzen. In de categorie Forensics kraakte ik een verborgen AES-sleutel in een afbeelding met een custom Python-script (PyCryptodome). Ondanks de eenzamere individuele setup dit jaar, bewees mijn doorzettingsvermogen dat ik ook onder druk en met beperkte stage-tijd complexe puzzels kan oplossen.",
+        text: "De Cybersecurity Challenge 2026 testte mijn grenzen. In de categorie Forensics kraakte ik een verborgen AES-sleutel in een afbeelding met een custom Python-script (PyCryptodome). Ondanks de eenzamere individuele setup dit year, bewees mijn doorzettingsvermogen dat ik ook onder druk en met beperkte stage-tijd complexe puzzels kan oplossen.",
         flair: "> [STATUS: DECRYPTED] | AES-CBC | Python",
         type: "terminal"
     },
@@ -850,7 +837,6 @@ scene("testimonials", (info) => {
     setGravity(0);
     add([rect(width(), height()), pos(0, 0), color(rgb(20, 10, 30)), fixed(), z(-20)]);
 
-    // Room boundaries or just a general space
     add([
         text("TESTIMONIALS ROOM", { size: 24 }),
         pos(width() / 2, 40),
@@ -860,8 +846,8 @@ scene("testimonials", (info) => {
 
     const npcs = [
         { name: "Cas", pos: vec2(width() * 0.25, height() / 2), color: rgb(100, 200, 255), testimonial: "Cas: 'Ik heb hem leren kennen als iemand die betrouwbaar is en zijn werk met de nodige zorg en toewijding uitvoert. Hij werkt gestructureerd, denkt mee en is een aangename persoon om mee samen te werken.'" },
-        { name: "Safri", pos: vec2(width() * 0.5, height() / 2), color: rgb(255, 150, 100), url: "https://www.sarbjitsingh.be/", testimonial: "Safri: 'Ik waardeer aan jou dat je veel mee bent met wat er in de wereld gebeurt en daar ook boeiend over kan vertellen. Je brengt interessante inzichten en nieuwe ideeën in de groep, en tegelijk maak je de sfeer vaak wat luchtiger.'" },
-        { name: "Ferre", pos: vec2(width() * 0.75, height() / 2), color: rgb(150, 255, 100), sprite: "ferre", testimonial: "Ferre: 'Hij is iemand die altijd 100% geeft en door die inzet weet je dat er altijd een resultaat gaat zijn waar je trots op kan zijn'" },
+        { name: "Safri", pos: vec2(width() * 0.5, height() / 2), color: rgb(255, 150, 100), testimonial: "Safri: 'Ik waardeer aan jou dat je veel mee bent met wat er in de wereld gebeurt en daar ook boeiend over kan vertellen. Je brengt interessante inzichten en nieuwe ideeën in de groep, en tegelijk maak je de sfeer vaak wat luchtiger.'" },
+        { name: "Ferre", pos: vec2(width() * 0.75, height() / 2), color: rgb(150, 255, 100), testimonial: "Ferre: 'Hij is iemand die altijd 100% geeft en door die inzet weet je dat er altijd een resultaat gaat zijn waar je trots op kan zijn'" },
     ];
 
     npcs.forEach((n) => {
@@ -874,63 +860,12 @@ scene("testimonials", (info) => {
             z(20),
         ]);
 
-        if (n.url) {
-            const orb = add([
-                circle(12),
-                pos(n.pos),
-                color(n.color),
-                outline(2, rgb(255, 255, 255)),
-                area(),
-                anchor("center"),
-                z(25),
-                "web_link",
-                { url: n.url, owner: n.name }
-            ]);
-
-            orb.add([
-                text("WWW", { size: 8 }),
-                anchor("center"),
-                color(rgb(255, 255, 255)),
-            ]);
-
-            orb.onUpdate(() => {
-                const t = time() * 2;
-                orb.pos = n.pos.add(vec2(Math.cos(t) * 55, Math.sin(t) * 40));
-                orb.scale = vec2(1 + Math.sin(time() * 5) * 0.1);
-            });
-        }
-
-        if (n.sprite) {
-            // Create a masked container (shrunk to 60px diameter)
-            const maskContainer = base.add([
-                circle(30),
-                mask("intersect"),
-                anchor("center"),
-            ]);
-
-            // Add the sprite inside the mask
-            maskContainer.add([
-                sprite(n.sprite, { width: 60, height: 60 }),
-                anchor("center"),
-            ]);
-            
-            // Add a nice border
-            base.add([
-                circle(30),
-                anchor("center"),
-                outline(3, n.color),
-                color(rgb(0, 0, 0)),
-                opacity(0),
-                z(-1),
-            ]);
-        } else {
-            base.add([
-                sprite("bean"),
-                scale(0.8),
-                anchor("center"),
-                color(n.color),
-            ]);
-        }
+        base.add([
+            sprite("bean"),
+            scale(1),
+            anchor("center"),
+            color(n.color),
+        ]);
 
         add([
             text(n.name, { size: 16 }),
