@@ -218,7 +218,7 @@ scene("hub", () => {
         });
     });
 
-    // Fade in
+    // Fade
     const fadeIn = add([
         rect(width(), height()),
         pos(0, 0),
