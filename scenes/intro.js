@@ -192,7 +192,7 @@ export default function() {
         let onReturn = false;
         player.onCollide("return", () => {
             onReturn = true;
-            returnPrompt.text = "Press E to Exit";
+            returnPrompt.text = "Druk E om af te sluiten";
         });
 
         player.onCollideEnd("return", () => {

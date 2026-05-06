@@ -80,7 +80,7 @@ export default function() {
 
             const labels = [
                 { t: "START", x: 0, shown: false },
-                { t: "LEARNING", x: 0.3, shown: false },
+                { t: "LEREN", x: 0.3, shown: false },
                 { t: "PXL", x: 0.7, shown: false },
                 { t: "PRO", x: 1.0, shown: false },
             ];
@@ -209,7 +209,7 @@ export default function() {
         let onReturn = false;
         player.onCollide("return", () => {
             onReturn = true;
-            returnPrompt.text = "Press E to Return";
+            returnPrompt.text = "Druk E om terug te gaan";
         });
 
         player.onCollideEnd("return", () => {

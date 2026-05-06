@@ -24,7 +24,7 @@ export default function() {
         }
 
         const title = add([
-            text("PLANET EASTER EGG: UNNECESSARILY ENTERPRISE EDITION", { size: 24 }),
+            text("PLANEET EASTER EGG: ONNODIG ENTERPRISE EDITIE", { size: 24 }),
             pos(width() / 2, 30),
             anchor("center"),
             color(rgb(120, 255, 255)),
@@ -32,7 +32,7 @@ export default function() {
         ]);
 
         const subtitle = add([
-            text("You discovered a completely over-scoped feature. Congratulations?", { size: 15 }),
+            text("Je hebt een volledig overschatte functie ontdekt. Gefeliciteerd?", { size: 15 }),
             pos(width() / 2, 62),
             anchor("center"),
             color(rgb(180, 220, 255)),
@@ -85,14 +85,14 @@ export default function() {
         ]);
 
         panel.add([
-            text("Planet Operations Dashboard", { size: 18 }),
+            text("Planeet Bedrijfsdashboard", { size: 18 }),
             pos(175, 24),
             anchor("center"),
             color(rgb(160, 220, 255)),
         ]);
 
         const metricsText = panel.add([
-            text("booting...", { size: 14, lineSpacing: 6 }),
+            text("opstart...", { size: 14, lineSpacing: 6 }),
             pos(20, 55),
             color(rgb(220, 240, 255)),
         ]);
@@ -118,11 +118,11 @@ export default function() {
         let chaosMode = false;
 
         const loreLines = [
-            "Lore #1: This planet has 14 committees and 0 deadlines.",
-            "Lore #2: Bean satellites vote on architecture decisions.",
-            "Lore #3: The ring is made of deprecated TODO comments.",
-            "Lore #4: QA approved this easter egg out of pure confusion.",
-            "Lore #5: The planet was rewritten 6 times for 'scalability'.",
+            "Lore #1: Deze planeet heeft 14 commissies en 0 deadlines.",
+            "Lore #2: Bean-satellieten stemmen over architectuurbeslissingen.",
+            "Lore #3: De ring bestaat uit verouderde TODO-opmerkingen.",
+            "Lore #4: QA goedgekeurd dit easter egg uit pure verwarring.",
+            "Lore #5: De planeet werd 6 keer herschreven voor 'schaalbaarheid'.",
         ];
 
         const loreBox = add([
@@ -133,14 +133,14 @@ export default function() {
             z(20),
         ]);
         loreBox.add([
-            text("Archived Cosmic Lore", { size: 18 }),
+            text("Gearchiveerde Kosmische Verhalen", { size: 18 }),
             pos(235, 24),
             anchor("center"),
             color(rgb(255, 215, 165)),
         ]);
 
         const loreText = loreBox.add([
-            text("Press L to reveal classified nonsense.", { size: 14, width: 430, lineSpacing: 6 }),
+            text("Druk L om geclassificeerde nonsens te onthullen.", { size: 14, width: 430, lineSpacing: 6 }),
             pos(20, 55),
             color(rgb(255, 240, 220)),
         ]);
@@ -162,7 +162,7 @@ export default function() {
         });
 
         const helpText = add([
-            text("Arrows: Move | B: Boop planet | L: Lore | C: Chaos | R: Return", { size: 14 }),
+            text("Pijlen: Bewegen | B: Planeet aanraken | L: Verhalen | C: Chaos | R: Terug", { size: 14 }),
             pos(width() / 2, height() - 70),
             anchor("center"),
             color(rgb(205, 225, 255)),
@@ -197,12 +197,12 @@ export default function() {
             const complexity = 100 + boops * 13 + discoveredLore * 29 + (chaosMode ? 999 : 0);
             metricsText.text = [
                 `Scanner Charge: ${Math.floor(scannerCharge)}%`,
-                `Planet Boops: ${boops}`,
-                `Lore Unlocked: ${discoveredLore}/${loreLines.length}`,
-                `Technical Debt: ${complexity} units`,
-                `Status: ${chaosMode ? "ABSOLUTE CHAOS" : "over-engineered but stable"}`,
+                `Planeet-aanrakingen: ${boops}`,
+                `Verhalen Ontgrendeld: ${discoveredLore}/${loreLines.length}`,
+                `Technische Schuld: ${complexity} eenheden`,
+                `Status: ${chaosMode ? "ABSOLUTE CHAOS" : "over-engineered maar stabiel"}`,
                 "",
-                "Tip: boop near core for premium analytics.",
+                "Tip: aanraken in de buurt van kern voor premium analytica.",
             ].join("\n");
         }
 
@@ -228,9 +228,9 @@ export default function() {
             });
 
             if (player.overCore) {
-                showToast("Core Boop Certified. Planet morale improved by 400%.");
+                showToast("Kern-Aanraking Geverifieerd. Moraal planeet verbeterd met 400%.");
             } else {
-                showToast("Long-distance boop accepted by interplanetary protocol.");
+                showToast("Afstandsaanraking geaccepteerd door interplanetair protocol.");
             }
 
             refreshMetrics();
@@ -240,16 +240,16 @@ export default function() {
             if (discoveredLore < loreLines.length) {
                 discoveredLore += 1;
                 loreText.text = loreLines.slice(0, discoveredLore).join("\n");
-                showToast(`Lore unlocked: ${discoveredLore}/${loreLines.length}`);
+                showToast(`Verhaal ontgrendeld: ${discoveredLore}/${loreLines.length}`);
             } else {
-                showToast("All lore unlocked. The universe is now fully documented.");
+                showToast("Alle verhalen ontgrendeld. Het universum is nu volledig gedocumenteerd.");
             }
             refreshMetrics();
         });
 
         onKeyPress("c", () => {
             chaosMode = !chaosMode;
-            showToast(chaosMode ? "Chaos mode ON. Excellent questionable decision." : "Chaos mode OFF. Boring, but responsible.");
+            showToast(chaosMode ? "Chaos-modus AAN. Uitstekende discutabele beslissing." : "Chaos-modus UIT. Saai, maar verantwoord.");
             refreshMetrics();
         });
 
@@ -289,7 +289,7 @@ export default function() {
             }
 
             returnHint.text = player.overCore
-                ? "You are at the Core. Press B to boop with maximum bureaucracy."
+                ? "Je bent in de kern. Druk B om aan te raken met maximale bureaucratie."
                 : "";
 
             refreshMetrics();

@@ -40,7 +40,7 @@ export default function(PORTFOLIO_DATA) {
         ]);
 
         add([
-            text("Arrows: Move | E: Interact", { size: 14 }),
+            text("Pijlen: Bewegen | E: Interactie", { size: 14 }),
             pos(width() / 2, height() - 70),
             anchor("center"),
             color(rgb(205, 225, 255)),
@@ -108,7 +108,7 @@ export default function(PORTFOLIO_DATA) {
 
         player.onCollide("structure", (s) => {
             player.activePortal = s;
-            prompt.text = `Press E to enter ${s.info.title}`;
+            prompt.text = `Druk E om in te gaan ${s.info.title}`;
         });
 
         player.onCollideEnd("structure", () => {
@@ -119,7 +119,7 @@ export default function(PORTFOLIO_DATA) {
         player.onCollide("planet_egg", () => {
             player.onPlanetEgg = true;
             if (!player.activePortal) {
-                prompt.text = "Press E to inspect suspiciously important planet";
+                prompt.text = "Druk E om verdacht belangrijke planeet te onderzoeken";
             }
         });
 
@@ -131,7 +131,7 @@ export default function(PORTFOLIO_DATA) {
         onUpdate(() => {
             if (player.activePortal && isKeyPressed("e")) {
                 const id = player.activePortal.info.id;
-                const specializedScenes = ["testimonials", "intro", "cyber"];
+                const specializedScenes = ["testimonials", "intro", "cyber", "fosdem"];
                 if (specializedScenes.includes(id)) {
                     go(id, player.activePortal.info);
                 } else {

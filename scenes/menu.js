@@ -16,7 +16,7 @@ export default function() {
         ]);
 
         btn.add([
-            text("OPEN PORTFOLIO", { size: 24 }),
+            text("PORTFOLIO OPENEN", { size: 24 }),
             anchor("center"),
             color(255, 255, 255),
         ]);

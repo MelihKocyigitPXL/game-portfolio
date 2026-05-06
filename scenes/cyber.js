@@ -90,9 +90,9 @@ export default function() {
         player.onCollide("terminal", () => {
             player.activeTerminal = true;
             if (!isProcessing) {
-                if (phase === 0) prompt.text = "Press E to extract Base64";
-                else if (phase === 1) prompt.text = "Press E to run Python script";
-                else if (phase === 2) prompt.text = "Press E to read reflection";
+                if (phase === 0) prompt.text = "Druk E om Base64 uit te pakken";
+                else if (phase === 1) prompt.text = "Druk E om Python-script uit te voeren";
+                else if (phase === 2) prompt.text = "Druk E om reflectie te lezen";
             }
         });
 
@@ -107,7 +107,7 @@ export default function() {
             if (phase === 0) {
                 consoleOutput.text += "\n\n> String 1 (Key): mR18... (REDACTED)\n> String 2 (IV):  aXo2... (REDACTED)";
                 phase = 1;
-                prompt.text = "Press E to run Python script";
+                prompt.text = "Druk E om Python-script uit te voeren";
             } else if (phase === 1) {
                 isProcessing = true;
                 prompt.text = "Processing...";
@@ -119,7 +119,7 @@ export default function() {
                         consoleOutput.text += "\n\n(FLAG FOUND): CTF{F0R3NS1C5_M4ST3R_2026}";
                         phase = 2;
                         isProcessing = false;
-                        if (player.activeTerminal) prompt.text = "Press E to read reflection";
+                        if (player.activeTerminal) prompt.text = "Druk E om de reflectie te lezen";
                     });
                 });
             } else if (phase === 2) {
@@ -138,7 +138,7 @@ export default function() {
             ]);
 
             overlay.add([
-                text("CYBERSECURITY CHALLENGE 2026 - REFLECTION", { size: 24 }),
+                text("CYBERSECURITY UITDAGING 2026 - REFLECTIE", { size: 24 }),
                 pos(0, -260),
                 anchor("center"),
                 color(rgb(255, 50, 50)),
@@ -154,7 +154,7 @@ export default function() {
             ]);
 
             overlay.add([
-                text("Press SPACE to close", { size: 16 }),
+                text("Druk SPATIEBALK om te sluiten", { size: 16 }),
                 pos(0, 260),
                 anchor("center"),
                 color(rgb(150, 150, 250)),
@@ -177,7 +177,7 @@ export default function() {
         ]);
 
         add([
-            text("EXIT", { size: 14 }),
+            text("UITGANG", { size: 14 }),
             pos(50, height() - 90),
             anchor("center"),
         ]);

@@ -1,7 +1,7 @@
 export default function() {
     scene("cutscene", () => {
         const t = add([
-            text("Initializing World...", { size: 24 }),
+            text("Wereld initialiseren...", { size: 24 }),
             pos(width() / 2, height() / 2),
             anchor("center"),
             opacity(0),

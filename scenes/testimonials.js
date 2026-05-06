@@ -4,7 +4,7 @@ export default function() {
         add([rect(width(), height()), pos(0, 0), color(rgb(20, 10, 30)), fixed(), z(-20)]);
 
         add([
-            text("TESTIMONIALS ROOM", { size: 24 }),
+            text("GETUIGENISSENRUIMTE", { size: 24 }),
             pos(width() / 2, 40),
             anchor("center"),
             color(rgb(200, 100, 255)),
@@ -84,7 +84,7 @@ export default function() {
 
         player.onCollide("npc", (n) => {
             player.activeNPC = n;
-            prompt.text = `Press E to talk to ${n.name}`;
+            prompt.text = `Druk E om te praten met ${n.name}`;
         });
 
         player.onCollideEnd("npc", () => {
@@ -113,7 +113,7 @@ export default function() {
         ]);
 
         add([
-            text("EXIT", { size: 14 }),
+            text("UITGANG", { size: 14 }),
             pos(50, height() - 90),
             anchor("center"),
         ]);
