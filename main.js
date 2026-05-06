@@ -11,6 +11,7 @@ kaplay({
 // --- ASSETS ---
 loadBean();
 loadSprite("thalento", "assets/thalento.png");
+loadSprite("arrowkeys", "assets/arrowkeys.png");
 
 const PORTFOLIO_DATA = [
     { 
@@ -160,21 +161,41 @@ scene("hub", () => {
         "planet_egg",
     ]);
 
-    // 2. TUTORIAL 
-    const tutColor = rgb(150, 150, 255);
-    const tutOpacity = 0.3;
-    const tutPos = vec2(width() / 2, height() / 2 + 100);
+    // 2. TUTORIAL (Compact & Clear)
+    const tutColor = rgb(220, 220, 255);
+    const tutOpacity = 0.8;
+    const tutPos = vec2(width() / 2, height() / 2 + 130);
 
-    // Movement arrows cross
-    add([text("^", { size: 48 }), pos(tutPos.x, tutPos.y - 55), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
-    add([text("<", { size: 48 }), pos(tutPos.x - 55, tutPos.y), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
-    add([text(">", { size: 48 }), pos(tutPos.x + 55, tutPos.y), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
-    add([text("v", { size: 48 }), pos(tutPos.x, tutPos.y + 55), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
-    add([text("MOVE", { size: 24 }), pos(tutPos.x, tutPos.y), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
+    // Movement Box & Sprite
+    add([
+        rect(160, 110, { radius: 4 }), 
+        pos(tutPos.x - 70, tutPos.y - 10),
+        anchor("center"),
+        color(rgb(20, 20, 40)),
+        opacity(0.4),
+        z(-4),
+    ]);
+    add([
+        sprite("arrowkeys"),
+        pos(tutPos.x - 70, tutPos.y - 10),
+        anchor("center"),
+        opacity(tutOpacity),
+        scale(0.18),
+        z(-3),
+    ]);
+    add([text("MOVE", { size: 10 }), pos(tutPos.x - 70, tutPos.y + 60), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]); // Moved down
 
-    // Interact E
-    add([text("E", { size: 32 }), pos(tutPos.x + 180, tutPos.y), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
-    add([text("INTERACT", { size: 12 }), pos(tutPos.x + 180, tutPos.y + 40), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
+    // Interaction Box & Text
+    add([
+        rect(70, 70, { radius: 4 }), 
+        pos(tutPos.x + 70, tutPos.y),
+        anchor("center"),
+        color(rgb(20, 20, 40)),
+        opacity(0.4),
+        z(-4),
+    ]);
+    add([text("E", { size: 24 }), pos(tutPos.x + 70, tutPos.y), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
+    add([text("INTERACT", { size: 10 }), pos(tutPos.x + 70, tutPos.y + 60), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]); // Moved down
 
     // 2. PORTALS
     PORTFOLIO_DATA.forEach((item, index) => {
