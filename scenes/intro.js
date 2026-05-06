@@ -3,7 +3,6 @@ export default function() {
         setGravity(0);
         add([rect(width(), height()), pos(0, 0), color(rgb(10, 20, 30)), fixed(), z(-20)]);
 
-        // 1. THALENTO LOGO (Top Middle)
         add([
             sprite("thalento"),
             pos(width() / 2, 55),
@@ -11,7 +10,6 @@ export default function() {
             anchor("center"),
         ]);
 
-        // 2. MAIN MONUMENT (Text Content)
         const monument = add([
             rect(width() * 0.6, 320, { radius: 12 }),
             pos(width() / 2, height() / 2),
@@ -34,7 +32,6 @@ export default function() {
             color(rgb(255, 255, 255)),
         ]);
 
-        // 3. THALENTO TRAIT PEDESTALS
         const traits = [
             { 
                 label: "DENKEN", 
@@ -75,7 +72,6 @@ export default function() {
         ];
 
         traits.forEach((t) => {
-            // Base Circle (Solid Background)
             const p = add([
                 circle(50),
                 pos(t.pos),
@@ -87,7 +83,6 @@ export default function() {
                 { info: t }
             ]);
 
-            // Percentage fill circle (Visual indicator)
             p.add([
                 circle(50 * t.val),
                 color(t.color),
@@ -108,7 +103,6 @@ export default function() {
                 color(t.color),
             ]);
 
-            // Visual FX for each trait
             if (t.label === "SAMENWERKEN") {
                 const fx = p.add([
                     circle(55),
@@ -123,7 +117,6 @@ export default function() {
             }
         });
 
-        // 4. PLAYER (Enter and Exit from Middle Bottom)
         const player = add([
             sprite("bean"),
             pos(width() / 2, height() - 110),
@@ -138,7 +131,6 @@ export default function() {
         onKeyDown("up", () => player.move(0, -SPEED));
         onKeyDown("down", () => player.move(0, SPEED));
 
-        // 5. INTERACTION OVERLAY
         const traitInfoBox = add([
             rect(500, 110, { radius: 8 }),
             pos(width() / 2, height() - 180),
@@ -181,7 +173,6 @@ export default function() {
             traitText.text = "";
         });
 
-        // 6. RETURN PORTAL (Middle Bottom)
         const returnPortal = add([
             circle(32),
             pos(width() / 2, height() - 60),
@@ -215,7 +206,6 @@ export default function() {
             }
         });
 
-        // Fade in
         const f = add([rect(width(), height()), pos(0, 0), color(rgb(0, 0, 0)), opacity(1), fixed(), z(100)]);
         tween(1, 0, 0.5, (v) => f.opacity = v);
     });

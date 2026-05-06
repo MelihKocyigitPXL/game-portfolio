@@ -3,6 +3,7 @@ import { PORTFOLIO_DATA } from "./data.js";
 import menuScene from "./scenes/menu.js";
 import cutsceneScene from "./scenes/cutscene.js";
 import hubScene from "./scenes/hub.js";
+import cyberScene from "./scenes/cyber.js";
 import easterEggScene from "./scenes/planet_easter_egg.js";
 import detailScene from "./scenes/detail.js";
 import introScene from "./scenes/intro.js";
@@ -16,19 +17,18 @@ kaplay({
     letterbox: true,
 });
 
-// --- ASSETS ---
 loadBean();
 loadSprite("thalento", "assets/thalento.png");
 loadSprite("arrowkeys", "assets/arrowkeys.png");
+loadSprite("rainbowdash", "assets/rainbowdash.jpg");
 
-// --- INITIALIZE SCENES ---
 menuScene();
 cutsceneScene();
 hubScene(PORTFOLIO_DATA);
+cyberScene();
 easterEggScene();
 detailScene();
 introScene();
 testimonialsScene();
 
-// --- START GAME ---
 go("menu");

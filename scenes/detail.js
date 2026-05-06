@@ -2,7 +2,6 @@ export default function() {
     scene("detail", (info) => {
         setGravity(0);
         
-        // 1. BACKGROUND
         const bgColor = rgb(
             Math.floor(info.color[0] * 0.1),
             Math.floor(info.color[1] * 0.1),
@@ -10,7 +9,6 @@ export default function() {
         );
         add([rect(width(), height()), pos(0, 0), color(bgColor), fixed(), z(-20)]);
 
-        // 2. MONUMENT (Initial invisible)
         const monument = add([
             rect(width() * 0.85, 480, { radius: 12 }),
             pos(width() / 2, height() / 2 - 20),
@@ -44,7 +42,6 @@ export default function() {
             opacity(info.type === "graph" ? 0 : 0.8),
         ]);
 
-        // TYPE-SPECIFIC EFFECTS
         if (info.type === "terminal") {
             onUpdate(() => {
                 if (chance(0.1)) {
@@ -60,12 +57,10 @@ export default function() {
                 }
             });
         } else if (info.type === "graph") {
-            // GROWTH GRAPH CUTSCENE
             const graphW = 500;
             const graphH = 300;
             const origin = vec2(width() / 2 - graphW / 2, height() / 2 + 100);
 
-            // Axes
             const xAxis = add([
                 rect(graphW, 4),
                 pos(origin),
@@ -100,7 +95,6 @@ export default function() {
                 tween(0, 1, 2.4, (progress) => {
                     const step = Math.floor(progress * totalSteps);
 
-                    // Draw only newly reached points each frame
                     for (let i = lastStep + 1; i <= step; i++) {
                         const p = i / totalSteps;
                         const currX = p * graphW;
@@ -181,7 +175,6 @@ export default function() {
             }
         }
 
-        // 3. PLAYER
         const player = add([
             sprite("bean"),
             pos(width() / 2, height() - 140),
@@ -196,7 +189,6 @@ export default function() {
         onKeyDown("up", () => player.move(0, -SPEED));
         onKeyDown("down", () => player.move(0, SPEED));
 
-        // 4. RETURN
         const returnPortal = add([
             circle(28),
             pos(width() / 2, height() - 35),
@@ -231,7 +223,6 @@ export default function() {
             }
         });
 
-        // 5. FADE IN
         const fadeIn = add([
             rect(width(), height()),
             pos(0, 0),

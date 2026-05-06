@@ -102,7 +102,6 @@ export default function() {
             }
         });
 
-        // Return portal
         const returnPortal = add([
             circle(28),
             pos(50, height() - 50),

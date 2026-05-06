@@ -2,7 +2,6 @@ export default function(PORTFOLIO_DATA) {
     scene("hub", () => {
         setGravity(0);
 
-        // 1. SCENERY: Nebula
         const nebulaColors = [rgb(40, 10, 50), rgb(10, 20, 50), rgb(30, 0, 30)];
         for (let i = 0; i < 6; i++) {
             add([
@@ -15,7 +14,6 @@ export default function(PORTFOLIO_DATA) {
             ]);
         }
 
-        // Stars
         for (let i = 0; i < 80; i++) {
             add([
                 pos(rand(0, width()), rand(0, height())),
@@ -26,14 +24,12 @@ export default function(PORTFOLIO_DATA) {
             ]);
         }
 
-        // Planet
         const planetPos = vec2(width() * 0.55, height() * 0.15);
         add([circle(60), pos(planetPos), color(rgb(100, 150, 255)), opacity(0.15), z(-4)]);
         add([rect(160, 4, { radius: 2 }), pos(planetPos), color(rgb(200, 220, 255)), opacity(0.4), anchor("center"), rotate(-25), z(-3)]);
         add([circle(50), pos(planetPos), color(rgb(100, 160, 255)), outline(3, rgb(255, 255, 255)), z(-2)]);
         add([circle(50), pos(planetPos.add(6, 6)), color(rgb(0, 0, 30)), opacity(0.6), z(-1)]);
 
-        // Hidden easter egg trigger around the planet
         const planetEggTrigger = add([
             circle(62),
             pos(planetPos),
@@ -43,7 +39,6 @@ export default function(PORTFOLIO_DATA) {
             "planet_egg",
         ]);
 
-        // 2. TUTORIAL (Similar to Easter Egg Style)
         add([
             text("Arrows: Move | E: Interact", { size: 14 }),
             pos(width() / 2, height() - 70),
@@ -52,7 +47,6 @@ export default function(PORTFOLIO_DATA) {
             z(45),
         ]);
 
-        // 2. PORTALS
         PORTFOLIO_DATA.forEach((item, index) => {
             const side = index % 2 === 0 ? -1 : 1;
             const x = width() / 2 + (side * 350);
@@ -91,7 +85,6 @@ export default function(PORTFOLIO_DATA) {
             ]);
         });
 
-        // 3. PLAYER
         const player = add([
             sprite("bean"),
             pos(width() / 2, height() / 2),
@@ -138,8 +131,7 @@ export default function(PORTFOLIO_DATA) {
         onUpdate(() => {
             if (player.activePortal && isKeyPressed("e")) {
                 const id = player.activePortal.info.id;
-                // Check if a specialized scene exists, else use generic detail
-                const specializedScenes = ["testimonials", "intro"];
+                const specializedScenes = ["testimonials", "intro", "cyber"];
                 if (specializedScenes.includes(id)) {
                     go(id, player.activePortal.info);
                 } else {
@@ -149,11 +141,9 @@ export default function(PORTFOLIO_DATA) {
                 go("planet_easter_egg");
             }
 
-            // Tiny pulse so the trigger area feels magically suspicious
             planetEggTrigger.scale = vec2(1 + Math.sin(time() * 3) * 0.02);
         });
 
-        // Fade
         const fadeIn = add([
             rect(width(), height()),
             pos(0, 0),

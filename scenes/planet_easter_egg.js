@@ -10,7 +10,6 @@ export default function() {
             z(-100),
         ]);
 
-        // Decorative overkill stars
         for (let i = 0; i < 220; i++) {
             const twinkle = add([
                 rect(rand(1, 3), rand(1, 3)),
@@ -40,7 +39,6 @@ export default function() {
             z(30),
         ]);
 
-        // Planet core and orbiting beans because yes
         const core = add([
             circle(80),
             pos(width() / 2, height() / 2),
@@ -78,7 +76,6 @@ export default function() {
             orbiters.push(orbiter);
         }
 
-        // Metrics panel (massive overkill)
         const panel = add([
             rect(350, 240, { radius: 10 }),
             pos(25, 95),
@@ -100,7 +97,6 @@ export default function() {
             color(rgb(220, 240, 255)),
         ]);
 
-        // Achievement toaster
         const toast = add([
             rect(420, 46, { radius: 8 }),
             pos(width() / 2, height() - 36),
@@ -262,16 +258,13 @@ export default function() {
         });
 
         onUpdate(() => {
-            // Keep player in bounds
             player.pos.x = clamp(player.pos.x, 18, width() - 18);
             player.pos.y = clamp(player.pos.y, 18, height() - 18);
 
-            // Animate core and glow
             coreGlow.pos = core.pos;
             core.scale = vec2(1 + Math.sin(time() * 2.8) * 0.05);
             coreGlow.scale = vec2(1.05 + Math.sin(time() * 2) * 0.12);
 
-            // Orbiting bean simulation engine v12.5
             orbiters.forEach((orbiter, idx) => {
                 const a = time() * orbiter.orbitSpeed + orbiter.orbitOffset;
                 orbiter.pos = vec2(
@@ -281,7 +274,6 @@ export default function() {
                 orbiter.angle += dt() * (55 + idx * 7);
             });
 
-            // Slowly charge scanner over time
             scannerCharge = Math.min(100, scannerCharge + dt() * 1.7);
 
             if (chaosMode) {

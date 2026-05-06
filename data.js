@@ -19,8 +19,8 @@ export const PORTFOLIO_DATA = [
         id: "cyber", 
         title: "Cybersecurity", 
         color: [255, 0, 0], 
-        text: "De Cybersecurity Challenge 2026 testte mijn grenzen. In de categorie Forensics kraakte ik een verborgen AES-sleutel in een afbeelding met een custom Python-script (PyCryptodome). Ondanks de eenzamere individuele setup dit year, bewees mijn doorzettingsvermogen dat ik ook onder druk en met beperkte stage-tijd complexe puzzels kan oplossen.",
-        flair: "> [STATUS: DECRYPTED] | AES-CBC | Python",
+        text: "De Cybersecurity Challenge 2026 testte mijn grenzen. In de categorie Forensics kraakte ik een verborgen AES-sleutel in een afbeelding met een custom Python-script (PyCryptodome). Ondanks de eenzamere individuele setup en de timing met mijn stage, bewees mijn doorzettingsvermogen dat ik ook onder druk complexe puzzels kan oplossen.",
+        flair: "> (STATUS: DECRYPTED) | AES-CBC | Python",
         type: "terminal"
     },
     { 
