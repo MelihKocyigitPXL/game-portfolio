@@ -160,6 +160,22 @@ scene("hub", () => {
         "planet_egg",
     ]);
 
+    // 2. TUTORIAL 
+    const tutColor = rgb(150, 150, 255);
+    const tutOpacity = 0.3;
+    const tutPos = vec2(width() / 2, height() / 2 + 100);
+
+    // Movement arrows cross
+    add([text("^", { size: 48 }), pos(tutPos.x, tutPos.y - 55), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
+    add([text("<", { size: 48 }), pos(tutPos.x - 55, tutPos.y), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
+    add([text(">", { size: 48 }), pos(tutPos.x + 55, tutPos.y), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
+    add([text("v", { size: 48 }), pos(tutPos.x, tutPos.y + 55), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
+    add([text("MOVE", { size: 24 }), pos(tutPos.x, tutPos.y), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
+
+    // Interact E
+    add([text("E", { size: 32 }), pos(tutPos.x + 180, tutPos.y), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
+    add([text("INTERACT", { size: 12 }), pos(tutPos.x + 180, tutPos.y + 40), anchor("center"), color(tutColor), opacity(tutOpacity), z(-3)]);
+
     // 2. PORTALS
     PORTFOLIO_DATA.forEach((item, index) => {
         const side = index % 2 === 0 ? -1 : 1;
@@ -234,7 +250,7 @@ scene("hub", () => {
     player.onCollide("planet_egg", () => {
         player.onPlanetEgg = true;
         if (!player.activePortal) {
-            prompt.text = "Press F to inspect suspiciously important planet";
+            prompt.text = "Press E to inspect suspiciously important planet";
         }
     });
 
@@ -253,7 +269,7 @@ scene("hub", () => {
             } else {
                 go("detail", player.activePortal.info);
             }
-        } else if (player.onPlanetEgg && isKeyPressed("f")) {
+        } else if (player.onPlanetEgg && isKeyPressed("e")) {
             go("planet_easter_egg");
         }
 
