@@ -6,14 +6,12 @@ export default function(PORTFOLIO_DATA) {
         let spinSpeed = 0;
         const TARGET_SPIN_SPEED = 180;
 
-        // The World container that will rotate
         const world = add([
             pos(width() / 2, height() / 2),
             anchor("center"),
             rotate(0),
         ]);
 
-        // Background (Static - does not rotate)
         add([
             rect(width(), height()),
             pos(0, 0),
@@ -22,7 +20,6 @@ export default function(PORTFOLIO_DATA) {
             z(-20)
         ]);
 
-        // Nebula effect (Inside world, so they rotate)
         const nebulaColors = [rgb(30, 10, 50), rgb(10, 20, 60), rgb(40, 10, 30)];
         for (let i = 0; i < 8; i++) {
             const nebula = world.add([
@@ -38,7 +35,6 @@ export default function(PORTFOLIO_DATA) {
             });
         }
 
-        // Parallax Stars (Inside world)
         for (let i = 0; i < 150; i++) {
             world.add([
                 pos(rand(-width() * 1.5, width() * 1.5), rand(-height() * 1.5, height() * 1.5)),
@@ -51,7 +47,6 @@ export default function(PORTFOLIO_DATA) {
         }
 
 
-        // Easter Egg Planet (Moved back to the RIGHT)
         const planetPos = vec2(width() * 0.35, -height() * 0.35);
         world.add([circle(70), pos(planetPos), color(rgb(100, 150, 255)), opacity(0.1), anchor("center"), z(-4)]);
         world.add([rect(180, 6, { radius: 3 }), pos(planetPos), color(rgb(200, 220, 255)), opacity(0.4), anchor("center"), rotate(-20), z(-3)]);
@@ -67,7 +62,6 @@ export default function(PORTFOLIO_DATA) {
             "planet_egg",
         ]);
 
-        // Rope Easter Egg (Moved to LEFT)
         const ropeX = 80;
         const rope = add([
             pos(ropeX, 0),
@@ -117,7 +111,6 @@ export default function(PORTFOLIO_DATA) {
                 anchor("center"),
             ]);
 
-            // Larger invisible hitbox
             portalGroup.add([
                 circle(72),
                 area(),
@@ -165,7 +158,7 @@ export default function(PORTFOLIO_DATA) {
             pos(width() / 2, height() / 2),
             area(),
             anchor("center"),
-            z(100), // Player always on top
+            z(100), 
             { activePortal: null, onPlanetEgg: false, onRope: false }
         ]);
 
@@ -268,7 +261,6 @@ export default function(PORTFOLIO_DATA) {
             if (player.onRope) {
                 isSpinning = !isSpinning;
                 
-                // Visual feedback for pull
                 handle.pos.y += 20;
                 rope.height += 20;
                 wait(0.1, () => {
@@ -277,7 +269,7 @@ export default function(PORTFOLIO_DATA) {
                 });
             } else if (player.activePortal) {
                 const id = player.activePortal.info.id;
-                const specializedScenes = ["testimonials", "intro", "cyber", "fosdem", "xfactor"];
+                const specializedScenes = ["testimonials", "intro", "cyber", "fosdem", "xfactor", "seminars"];
                 if (specializedScenes.includes(id)) go(id, player.activePortal.info);
                 else go("detail", player.activePortal.info);
             } else if (player.onPlanetEgg) {

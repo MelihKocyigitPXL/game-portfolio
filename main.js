@@ -8,6 +8,7 @@ import fosdemScene from "./scenes/fosdem.js";
 import easterEggScene from "./scenes/planet_easter_egg.js";
 import detailScene from "./scenes/detail.js";
 import introScene from "./scenes/intro.js";
+import seminarsScene from "./scenes/seminars.js";
 import testimonialsScene from "./scenes/testimonials.js";
 import xfactorScene from "./scenes/xfactor.js";
 
@@ -38,6 +39,7 @@ fosdemScene();
 easterEggScene();
 detailScene();
 introScene();
+seminarsScene();
 testimonialsScene();
 xfactorScene();
 
