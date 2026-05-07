@@ -90,31 +90,12 @@ export default function() {
             new THREE.SphereGeometry(1.66, 24, 24),
             new THREE.MeshBasicMaterial({
                 color: 0xb8efff,
-                wireframe: false,
+                wireframe: true,
                 transparent: true,
                 opacity: 0.18,
             })
         );
         globeGroup.add(grid);
-
-        const moonOrbit = new THREE.Group();
-        moonOrbit.rotation.x = 0.4;
-        moonOrbit.rotation.y = -0.8;
-        globeGroup.add(moonOrbit);
-
-        const moon = new THREE.Mesh(
-            new THREE.SphereGeometry(0.22, 20, 20),
-            new THREE.MeshStandardMaterial({ color: 0xe4ecff, roughness: 0.55, metalness: 0.05 })
-        );
-        moon.position.set(2.55, 0, 0);
-        moonOrbit.add(moon);
-
-        const moonGlow = new THREE.Mesh(
-            new THREE.SphereGeometry(0.28, 20, 20),
-            new THREE.MeshBasicMaterial({ color: 0x99cfff, transparent: true, opacity: 0.18 })
-        );
-        moonGlow.position.copy(moon.position);
-        moonOrbit.add(moonGlow);
 
         const light1 = new THREE.DirectionalLight(0xffffff, 2.2);
         light1.position.set(3, 2, 5);
@@ -162,7 +143,6 @@ export default function() {
             globeGroup.rotation.y += 0.0045;
             globeGroup.rotation.x = Math.sin(time() * 0.35) * 0.08;
             atmosphere.scale.setScalar(1 + Math.sin(time() * 2.2) * 0.015);
-            moonOrbit.rotation.y += 0.006;
             title.angle = Math.sin(time() * 1.8) * 1.2;
             subtitle.scale = vec2(1 + Math.sin(time() * 2.5) * 0.01);
             returnHint.text = "Welkom tot PLANEET X!";
