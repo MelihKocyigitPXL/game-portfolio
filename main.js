@@ -9,6 +9,7 @@ import easterEggScene from "./scenes/planet_easter_egg.js";
 import detailScene from "./scenes/detail.js";
 import introScene from "./scenes/intro.js";
 import testimonialsScene from "./scenes/testimonials.js";
+import xfactorScene from "./scenes/xfactor.js";
 
 kaplay({
     background: [5, 5, 15],
@@ -20,6 +21,7 @@ kaplay({
 
 loadBean();
 loadSprite("thalento", "assets/thalento.png");
+loadSprite("xfactor", "assets/xfactor.png");
 loadSprite("arrowkeys", "assets/arrowkeys.png");
 loadSprite("rainbowdash", "assets/rainbowdash.jpg");
 loadSprite("fosdemJava", "assets/fosdemJava.jpg");
@@ -37,5 +39,6 @@ easterEggScene();
 detailScene();
 introScene();
 testimonialsScene();
+xfactorScene();
 
 go("menu");

@@ -39,7 +39,15 @@ export const PORTFOLIO_DATA = [
         flair: "Open Source | Post-Quantum Crypto | ROSA",
         type: "crowd"
     },
-    { 
+    {
+        id: "xfactor",
+        title: "X-Factor",
+        color: [255, 165, 0],
+        text: "Verschillende aspecten van de X-factor komen duidelijk naar voren in mijn traject. De passie en innovatie is duidelijk aanwezig; ik werk graag aan applicaties en bouw graag dingen op. De creatieve uitwerking die gelinkt is aan mijn portfolio is hier een sterk voorbeeld van want ik zocht steeds nieuwe dingen om hieraan toe te voegen. Daarnaast heb ik mijn multidisciplinariteit versterkt door me niet te beperken tot applicatieontwikkeling, maar me ook te verdiepen in domeinen zoals cybersecurity. Mijn aanpassingsvermogen in groepsprojecten weerspiegelt mijn ondernemingszin. Ik neem verantwoordelijkheid en stuur bij waar nodig om het gewenste resultaat te bereiken samen met het team.",
+        flair: "PXL | Professionals & Excellence",
+        type: "xfactor"
+    },
+    {
         id: "reflection", 
         title: "Eindreflectie", 
         color: [255, 255, 255], 

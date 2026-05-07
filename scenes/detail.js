@@ -209,7 +209,7 @@ export default function() {
         let onReturn = false;
         player.onCollide("return", () => {
             onReturn = true;
-            returnPrompt.text = "Druk E om terug te gaan";
+            returnPrompt.text = "(E) TERUG";
         });
 
         player.onCollideEnd("return", () => {

@@ -189,7 +189,7 @@ export default function() {
 
         const returnPortal = add([
             circle(28),
-            pos(50, height() - 50),
+            pos(width() / 2, height() - 40),
             color(rgb(40, 40, 60)),
             outline(3, rgb(255, 255, 255)),
             area(),
@@ -197,14 +197,27 @@ export default function() {
             "return",
         ]);
 
-        add([
-            text("UITGANG", { size: 14 }),
-            pos(50, height() - 90),
+        const returnPrompt = add([
+            text("", { size: 14 }),
+            pos(80, height() - 40),
             anchor("center"),
         ]);
 
+        let onReturn = false;
         player.onCollide("return", () => {
-            go("hub");
+            onReturn = true;
+            returnPrompt.text = "(E) TERUG";
+        });
+
+        player.onCollideEnd("return", () => {
+            onReturn = false;
+            returnPrompt.text = "";
+        });
+
+        onUpdate(() => {
+            if (onReturn && isKeyPressed("e")) {
+                go("hub");
+            }
         });
 
         const f = add([rect(width(), height()), pos(0, 0), color(rgb(0, 0, 0)), opacity(1), fixed(), z(200)]);

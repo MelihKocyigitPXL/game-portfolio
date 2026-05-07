@@ -4,17 +4,18 @@ export default function() {
         add([rect(width(), height()), pos(0, 0), color(rgb(20, 10, 30)), fixed(), z(-20)]);
 
         add([
-            text("GETUIGENISSENRUIMTE", { size: 24 }),
+            text("Testimonials", { size: 24 }),
             pos(width() / 2, 40),
             anchor("center"),
             color(rgb(200, 100, 255)),
         ]);
 
         const npcs = [
-            { name: "Cas", pos: vec2(width() * 0.2, height() / 2), color: rgb(100, 200, 255), testimonial: "Cas: 'Ik heb hem leren kennen als iemand die betrouwbaar is en zijn werk met de nodige zorg en toewijding uitvoert. Hij werkt gestructureerd, denkt mee en is een aangename persoon om mee samen te werken.'" },
-            { name: "Safri", pos: vec2(width() * 0.4, height() / 2), color: rgb(255, 150, 100), testimonial: "Safri: 'Ik waardeer aan jou dat je veel mee bent met wat er in de wereld gebeurt en daar ook boeiend over kan vertellen. Je brengt interessante inzichten en nieuwe ideeën in de groep, en tegelijk maak je de sfeer vaak wat luchtiger.'" },
-            { name: "Ferre", pos: vec2(width() * 0.6, height() / 2), color: rgb(150, 255, 100), testimonial: "Ferre: 'Hij is iemand die altijd 100% geeft en door die inzet weet je dat er altijd een resultaat gaat zijn waar je trots op kan zijn'" },
-            { name: "Berdan", pos: vec2(width() * 0.8, height() / 2), color: rgb(255, 100, 255), testimonial: "Berdan: 'Ik heb hem leren kennen tijdens het IT-project en het klikte meteen. Hij is een sterk teamlid om mee te werken en bovendien iemand op wie je binnen een team altijd kunt vertrouwen.'" },
+            { name: "Cas", pos: vec2(width() * 0.16, height() * 0.45), color: rgb(100, 200, 255), testimonial: "Cas: 'Ik heb hem leren kennen als iemand die betrouwbaar is en zijn werk met de nodige zorg en toewijding uitvoert. Hij werkt gestructureerd, denkt mee en is een aangename persoon om mee samen te werken.'" },
+            { name: "Safri", pos: vec2(width() * 0.33, height() * 0.45), color: rgb(255, 150, 100), testimonial: "Safri: 'Ik waardeer aan jou dat je veel mee bent met wat er in de wereld gebeurt en daar ook boeiend over kan vertellen. Je brengt interessante inzichten en nieuwe ideeën in de groep, en tegelijk maak je de sfeer vaak wat luchtiger.'" },
+            { name: "Ferre", pos: vec2(width() * 0.5, height() * 0.45), color: rgb(150, 255, 100), testimonial: "Ferre: 'Hij is iemand die altijd 100% geeft en door die inzet weet je dat er altijd een resultaat gaat zijn waar je trots op kan zijn'" },
+            { name: "Berdan", pos: vec2(width() * 0.66, height() * 0.45), color: rgb(255, 100, 255), testimonial: "Berdan: 'Ik heb hem leren kennen tijdens het IT-project en het klikte meteen. Hij is een sterk teamlid om mee te werken en bovendien iemand op wie je binnen een team altijd kunt vertrouwen.'" },
+            { name: "Lucas", pos: vec2(width() * 0.84, height() * 0.45), color: rgb(209, 244, 52), testimonial: "Lucas: Wat ik het meest waardeer aan Melih is zijn motivatie en de manier waarop hij altijd met nieuwe ideeën komt. Hij is betrouwbaar, werkt hard en zorgt ervoor dat samenwerken altijd vlot en aangenaam verloopt. Je merkt echt dat hij passie heeft voor wat hij doet.'" },
         ];
 
         npcs.forEach((n) => {
@@ -104,7 +105,7 @@ export default function() {
 
         const returnPortal = add([
             circle(28),
-            pos(50, height() - 50),
+            pos(width() / 2, height() - 40),
             color(rgb(40, 40, 60)),
             outline(3, rgb(255, 255, 255)),
             area(),
@@ -112,14 +113,27 @@ export default function() {
             "return",
         ]);
 
-        add([
-            text("UITGANG", { size: 14 }),
-            pos(50, height() - 90),
+        const returnPrompt = add([
+            text("", { size: 14 }),
+            pos(width() / 2, height() - 85),
             anchor("center"),
         ]);
 
+        let onReturn = false;
         player.onCollide("return", () => {
-            go("hub");
+            onReturn = true;
+            returnPrompt.text = "(E) TERUG";
+        });
+
+        player.onCollideEnd("return", () => {
+            onReturn = false;
+            returnPrompt.text = "";
+        });
+
+        onUpdate(() => {
+            if (onReturn && isKeyPressed("e")) {
+                go("hub");
+            }
         });
     });
 }

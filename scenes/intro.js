@@ -174,25 +174,25 @@ export default function() {
         });
 
         const returnPortal = add([
-            circle(32),
-            pos(width() / 2, height() - 60),
+            circle(28),
+            pos(width() / 2, height() - 40),
             color(rgb(40, 40, 60)),
-            outline(4, rgb(255, 255, 255)),
+            outline(3, rgb(255, 255, 255)),
             area(),
             anchor("center"),
             "return",
         ]);
 
         const returnPrompt = add([
-            text("", { size: 16 }),
-            pos(width() / 2, height() - 110),
+            text("", { size: 14 }),
+            pos(width() / 2, height() - 85),
             anchor("center"),
         ]);
 
         let onReturn = false;
         player.onCollide("return", () => {
             onReturn = true;
-            returnPrompt.text = "Druk E om af te sluiten";
+            returnPrompt.text = "(E) TERUG";
         });
 
         player.onCollideEnd("return", () => {
