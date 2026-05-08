@@ -23,7 +23,6 @@ kaplay({
 
 loadBean();
 loadSprite("thalento", "assets/thalento.png");
-loadSprite("xfactor", "assets/xfactor.png");
 loadSprite("arrowkeys", "assets/arrowkeys.png");
 loadSprite("rainbowdash", "assets/rainbowdash.jpg");
 loadSprite("fosdemJava", "assets/fosdemJava.jpg");

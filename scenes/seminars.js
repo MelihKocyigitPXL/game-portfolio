@@ -62,17 +62,26 @@ export default function() {
         document.body.appendChild(canvas3d);
 
         function updateCanvasPosition() {
-            const pos = threeJsContainer.worldPos();
             const canvas = document.querySelector("canvas");
-            const rect = canvas.getBoundingClientRect();
+            if (!canvas) return;
             
+            const rect = canvas.getBoundingClientRect();
             const scaleX = rect.width / width();
             const scaleY = rect.height / height();
             
-            canvas3d.style.left = `${rect.left + (pos.x - 200) * scaleX}px`;
-            canvas3d.style.top = `${rect.top + (pos.y - 110) * scaleY}px`;
+            // Map the container's relative position to the screen
+            const containerPos = threeJsContainer.pos;
+            const monumentPos = monument.pos;
+            
+            // Calculate absolute pixel position relative to the game canvas
+            const centerX = rect.left + (monumentPos.x + containerPos.x) * scaleX;
+            const centerY = rect.top + (monumentPos.y + containerPos.y) * scaleY;
+
+            canvas3d.style.left = `${centerX - (200 * scaleX)}px`;
+            canvas3d.style.top = `${centerY - (110 * scaleY)}px`;
             canvas3d.style.width = `${400 * scaleX}px`;
             canvas3d.style.height = `${220 * scaleY}px`;
+            canvas3d.style.zIndex = "5"; 
         }
 
         updateCanvasPosition();
