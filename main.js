@@ -11,6 +11,7 @@ import introScene from "./scenes/intro.js";
 import seminarsScene from "./scenes/seminars.js";
 import testimonialsScene from "./scenes/testimonials.js";
 import xfactorScene from "./scenes/xfactor.js";
+import innovationScene from "./scenes/innovation.js";
 
 kaplay({
     background: [5, 5, 15],
@@ -41,6 +42,11 @@ detailScene();
 introScene();
 seminarsScene();
 testimonialsScene();
+xfactorScene();
+innovationScene();
+
+go("menu");
+;
 xfactorScene();
 
 go("menu");

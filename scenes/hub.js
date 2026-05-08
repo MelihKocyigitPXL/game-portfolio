@@ -269,7 +269,7 @@ export default function(PORTFOLIO_DATA) {
                 });
             } else if (player.activePortal) {
                 const id = player.activePortal.info.id;
-                const specializedScenes = ["testimonials", "intro", "cyber", "fosdem", "xfactor", "seminars"];
+                const specializedScenes = ["testimonials", "intro", "cyber", "fosdem", "xfactor", "seminars", "innovation"];
                 if (specializedScenes.includes(id)) go(id, player.activePortal.info);
                 else go("detail", player.activePortal.info);
             } else if (player.onPlanetEgg) {

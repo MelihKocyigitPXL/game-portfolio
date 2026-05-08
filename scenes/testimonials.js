@@ -42,7 +42,7 @@ export default function() {
                 name: "Lucas", 
                 pos: vec2(width() * 0.71, height() * 0.45), 
                 color: rgb(255, 80, 255), // Magenta
-                testimonial: "Lucas: Wat ik het meest waardeer aan Melih is zijn motivatie en de manier waarop hij altijd met nieuwe ideeën komt. Hij is betrouwbaar, werkt hard en zorgt ervoor dat samenwerken altijd vlot en aangenaam verloopt. Je merkt echt dat hij passie heeft voor wat hij doet.'" 
+                testimonial: "Lucas: 'Wat ik het meest waardeer aan Melih is zijn motivatie en de manier waarop hij altijd met nieuwe ideeën komt. Hij is betrouwbaar, werkt hard en zorgt ervoor dat samenwerken altijd vlot en aangenaam verloopt. Je merkt echt dat hij passie heeft voor wat hij doet.'" 
             },
             { 
                 name: "Safri", 
