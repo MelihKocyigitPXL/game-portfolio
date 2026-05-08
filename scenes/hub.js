@@ -14,13 +14,15 @@ export default function(PORTFOLIO_DATA) {
             rotate(0),
         ]);
 
-        // Three.js 3D Planet Overlay
         let threeCanvas;
         let renderer;
         let scene3d;
         let camera;
         let planetGroup;
         let animationFrameId;
+        let currentPlanetSpin = 0.00015;
+        const BASE_PLANET_SPIN = 0.00015;
+        const BOOST_PLANET_SPIN = 0.03;
 
         const setupThreeJS = () => {
             scene3d = new THREE.Scene();
@@ -32,8 +34,8 @@ export default function(PORTFOLIO_DATA) {
             threeCanvas = renderer.domElement;
             threeCanvas.style.position = "absolute";
             threeCanvas.style.pointerEvents = "none";
-            threeCanvas.style.zIndex = "-1"; 
-
+            threeCanvas.style.zIndex = "-1";
+            
             const kaplayCanvas = document.querySelector("canvas");
             if (kaplayCanvas) {
                 threeCanvas.style.width = kaplayCanvas.style.width;
@@ -43,7 +45,6 @@ export default function(PORTFOLIO_DATA) {
                 threeCanvas.style.transform = kaplayCanvas.style.transform || "translate(-50%, -50%)";
                 threeCanvas.style.border = kaplayCanvas.style.border;
                 threeCanvas.style.boxSizing = "border-box";
-
                 kaplayCanvas.style.position = "relative";
                 kaplayCanvas.style.zIndex = "1";
                 kaplayCanvas.style.backgroundColor = "transparent";
@@ -112,10 +113,31 @@ export default function(PORTFOLIO_DATA) {
             sunLight.position.set(200, 300, 100);
             scene3d.add(sunLight);
 
+            const starGeometry = new THREE.BufferGeometry();
+            const starMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.7,
+                transparent: true,
+                opacity: 0.8,
+            });
+
+            const starVertices = [];
+            for (let i = 0; i < 2000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = -Math.random() * 1000 - 500;
+                starVertices.push(x, y, z);
+            }
+
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene3d.add(stars);
+
             const animate3d = () => {
                 animationFrameId = requestAnimationFrame(animate3d);
-                planetGroup.rotation.y += 0.00015;
-                
+                planetGroup.rotation.y += currentPlanetSpin;
+                starMaterial.opacity = 0.6 + Math.sin(Date.now() * 0.002) * 0.3;
+
                 if (kaplayCanvas) {
                     threeCanvas.style.width = kaplayCanvas.style.width;
                     threeCanvas.style.height = kaplayCanvas.style.height;
@@ -131,7 +153,7 @@ export default function(PORTFOLIO_DATA) {
         onSceneLeave(() => {
             const kaplayCanvas = document.querySelector("canvas");
             if (kaplayCanvas) {
-                kaplayCanvas.style.backgroundColor = ""; 
+                kaplayCanvas.style.backgroundColor = "";
             }
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             if (renderer) renderer.dispose();
@@ -140,33 +162,32 @@ export default function(PORTFOLIO_DATA) {
             }
         });
 
+        const smallPlanetGroup = add([
+            pos(width() * 0.85, height() * 0.15),
+            fixed(),
+            z(10),
+        ]);
 
-        for (let i = 0; i < 150; i++) {
-            world.add([
-                pos(rand(-width() * 1.5, width() * 1.5), rand(-height() * 1.5, height() * 1.5)),
-                rect(rand(1, 3), rand(1, 3)),
-                color(rgb(200, 220, 255)),
-                opacity(rand(0.2, 0.9)),
-                z(-10),
-                "star"
-            ]);
-        }
+        smallPlanetGroup.add([circle(70), pos(0,0), color(rgb(100, 150, 255)), opacity(0.1), anchor("center"), z(-4)]);
+        const smallPlanetRing = smallPlanetGroup.add([rect(180, 6, { radius: 3 }), pos(0,0), color(rgb(200, 220, 255)), opacity(0.4), anchor("center"), rotate(-20), z(-3)]);
+        const smallPlanetCore = smallPlanetGroup.add([circle(50), pos(0,0), color(rgb(80, 140, 255)), outline(2, rgb(255, 255, 255)), anchor("center"), z(-2)]);
+        smallPlanetGroup.add([circle(45), pos(8, 8), color(rgb(0, 0, 40)), opacity(0.5), anchor("center"), z(-1)]);
 
-
-        const planetPos = vec2(width() * 0.35, -height() * 0.35);
-        world.add([circle(70), pos(planetPos), color(rgb(100, 150, 255)), opacity(0.1), anchor("center"), z(-4)]);
-        world.add([rect(180, 6, { radius: 3 }), pos(planetPos), color(rgb(200, 220, 255)), opacity(0.4), anchor("center"), rotate(-20), z(-3)]);
-        world.add([circle(50), pos(planetPos), color(rgb(80, 140, 255)), outline(2, rgb(255, 255, 255)), anchor("center"), z(-2)]);
-        world.add([circle(45), pos(planetPos.add(8, 8)), color(rgb(0, 0, 40)), opacity(0.5), anchor("center"), z(-1)]);
-
-        const planetEggTrigger = world.add([
+        const planetEggTrigger = smallPlanetGroup.add([
             circle(60),
-            pos(planetPos),
+            pos(0,0),
             area(),
             anchor("center"),
             opacity(0),
             "planet_egg",
         ]);
+
+        smallPlanetGroup.onUpdate(() => {
+            if (isSpinning) {
+                smallPlanetRing.angle += dt() * 1000;
+                smallPlanetCore.angle -= dt() * 500;
+            }
+        });
 
         const ropeX = 80;
         const rope = add([
@@ -239,6 +260,10 @@ export default function(PORTFOLIO_DATA) {
                 pos(x, y),
                 z(1)
             ]);
+
+            portalGroup.onUpdate(() => {
+                portalGroup.angle = -world.angle;
+            });
 
             const glow = portalGroup.add([
                 circle(55),
@@ -389,15 +414,13 @@ export default function(PORTFOLIO_DATA) {
 
             if (isSpinning) {
                 spinSpeed = lerp(spinSpeed, TARGET_SPIN_SPEED, dt() * 1.5);
+                currentPlanetSpin = lerp(currentPlanetSpin, BOOST_PLANET_SPIN, dt() * 1.5);
                 world.angle += spinSpeed * dt();
             } else {
                 spinSpeed = lerp(spinSpeed, 0, dt() * 3);
+                currentPlanetSpin = lerp(currentPlanetSpin, BASE_PLANET_SPIN, dt() * 3);
                 world.angle += spinSpeed * dt();
             }
-
-            get("star").forEach((star) => {
-                if (chance(0.01)) star.opacity = rand(0.2, 1);
-            });
         });
 
         onKeyPress("e", () => {
