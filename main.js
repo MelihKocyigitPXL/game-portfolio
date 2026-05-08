@@ -14,7 +14,7 @@ import xfactorScene from "./scenes/xfactor.js";
 import innovationScene from "./scenes/innovation.js";
 
 kaplay({
-    background: [5, 5, 15],
+    background: [5, 5, 15, 0],
     font: "monospace",
     width: 1000,
     height: 700,

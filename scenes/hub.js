@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export default function(PORTFOLIO_DATA) {
     scene("hub", () => {
         setGravity(0);
@@ -12,28 +14,132 @@ export default function(PORTFOLIO_DATA) {
             rotate(0),
         ]);
 
-        add([
-            rect(width(), height()),
-            pos(0, 0),
-            color(rgb(10, 15, 30)),
-            fixed(),
-            z(-20)
-        ]);
+        // Three.js 3D Planet Overlay
+        let threeCanvas;
+        let renderer;
+        let scene3d;
+        let camera;
+        let planetGroup;
+        let animationFrameId;
 
-        const nebulaColors = [rgb(30, 10, 50), rgb(10, 20, 60), rgb(40, 10, 30)];
-        for (let i = 0; i < 8; i++) {
-            const nebula = world.add([
-                pos(rand(-width(), width()), rand(-height(), height())),
-                circle(rand(200, 400)),
-                color(nebulaColors[i % 3]),
-                opacity(0.15),
-                anchor("center"),
-                z(-15),
-            ]);
-            nebula.onUpdate(() => {
-                nebula.opacity = 0.15 + Math.sin(time() * 0.5 + i) * 0.05;
+        const setupThreeJS = () => {
+            scene3d = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(35, width() / height(), 0.1, 2000);
+            camera.position.set(0, 0, 400);
+
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(width(), height());
+            threeCanvas = renderer.domElement;
+            threeCanvas.style.position = "absolute";
+            threeCanvas.style.pointerEvents = "none";
+            threeCanvas.style.zIndex = "-1"; 
+
+            const kaplayCanvas = document.querySelector("canvas");
+            if (kaplayCanvas) {
+                threeCanvas.style.width = kaplayCanvas.style.width;
+                threeCanvas.style.height = kaplayCanvas.style.height;
+                threeCanvas.style.top = kaplayCanvas.style.top || "50%";
+                threeCanvas.style.left = kaplayCanvas.style.left || "50%";
+                threeCanvas.style.transform = kaplayCanvas.style.transform || "translate(-50%, -50%)";
+                threeCanvas.style.border = kaplayCanvas.style.border;
+                threeCanvas.style.boxSizing = "border-box";
+
+                kaplayCanvas.style.position = "relative";
+                kaplayCanvas.style.zIndex = "1";
+                kaplayCanvas.style.backgroundColor = "transparent";
+            }
+            document.body.appendChild(threeCanvas);
+
+            planetGroup = new THREE.Group();
+            planetGroup.position.y = -520;
+            scene3d.add(planetGroup);
+
+            const planetRadius = 450;
+
+            const geoCore = new THREE.SphereGeometry(planetRadius, 128, 128);
+            const matCore = new THREE.MeshPhongMaterial({ 
+                color: 0x0a1a3a,
+                specular: 0x111111,
+                shininess: 25,
             });
-        }
+            const core = new THREE.Mesh(geoCore, matCore);
+            planetGroup.add(core);
+
+            const matLand = new THREE.MeshStandardMaterial({
+                color: 0x1a3a1a,
+                roughness: 0.9,
+                metalness: 0.0,
+                flatShading: true,
+            });
+
+            const landGroup = new THREE.Group();
+            planetGroup.add(landGroup);
+
+            for(let i = 0; i < 150; i++) {
+                const landSize = 5 + Math.random() * 25;
+                const geoLand = new THREE.IcosahedronGeometry(landSize, 1);
+                const land = new THREE.Mesh(geoLand, matLand);
+                
+                const phi = (Math.random() - 0.5) * 1.8;
+                const theta = (Math.random() - 0.5) * 0.7;
+                
+                land.position.x = planetRadius * Math.sin(theta) * Math.cos(phi);
+                land.position.y = planetRadius * Math.cos(theta);
+                land.position.z = planetRadius * Math.sin(theta) * Math.sin(phi);
+                
+                land.scale.set(1, 0.15, 1); 
+                land.quaternion.setFromUnitVectors(
+                    new THREE.Vector3(0, 1, 0), 
+                    land.position.clone().normalize()
+                );
+                
+                landGroup.add(land);
+            }
+
+            const matAtmosphere = new THREE.MeshBasicMaterial({
+                color: 0x4488ff,
+                transparent: true,
+                opacity: 0.12,
+                side: THREE.BackSide
+            });
+            const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(planetRadius + 15, 64, 64), matAtmosphere);
+            planetGroup.add(atmosphere);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+            scene3d.add(ambientLight);
+            
+            const sunLight = new THREE.DirectionalLight(0xffffff, 1.8);
+            sunLight.position.set(200, 300, 100);
+            scene3d.add(sunLight);
+
+            const animate3d = () => {
+                animationFrameId = requestAnimationFrame(animate3d);
+                planetGroup.rotation.y += 0.00015;
+                
+                if (kaplayCanvas) {
+                    threeCanvas.style.width = kaplayCanvas.style.width;
+                    threeCanvas.style.height = kaplayCanvas.style.height;
+                }
+                
+                renderer.render(scene3d, camera);
+            };
+            animate3d();
+        };
+
+        setupThreeJS();
+
+        onSceneLeave(() => {
+            const kaplayCanvas = document.querySelector("canvas");
+            if (kaplayCanvas) {
+                kaplayCanvas.style.backgroundColor = ""; 
+            }
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (renderer) renderer.dispose();
+            if (threeCanvas && threeCanvas.parentNode) {
+                threeCanvas.parentNode.removeChild(threeCanvas);
+            }
+        });
+
 
         for (let i = 0; i < 150; i++) {
             world.add([
@@ -83,9 +189,46 @@ export default function(PORTFOLIO_DATA) {
             "handle"
         ]);
 
-        // Portals
         const radiusX = 350;
         const radiusY = 180;
+
+        for (let i = 0; i < PORTFOLIO_DATA.length; i++) {
+            const angle1 = (i / PORTFOLIO_DATA.length) * Math.PI * 2;
+            const angle2 = ((i + 1) % PORTFOLIO_DATA.length) / PORTFOLIO_DATA.length * Math.PI * 2;
+
+            const p1 = vec2(Math.cos(angle1) * radiusX, Math.sin(angle1) * radiusY);
+            const p2 = vec2(Math.cos(angle2) * radiusX, Math.sin(angle2) * radiusY);
+
+            const dist = p1.dist(p2);
+            const ang = p2.sub(p1).angle();
+
+            world.add([
+                pos(p1),
+                rect(dist, 1),
+                rotate(ang),
+                color(rgb(100, 150, 255)),
+                opacity(0.15),
+                z(0),
+            ]);
+
+            const pulse = world.add([
+                pos(p1),
+                circle(2),
+                color(rgb(200, 220, 255)),
+                opacity(0),
+                z(1),
+                {
+                    t: rand(0, 1),
+                    speed: rand(0.1, 0.3)
+                }
+            ]);
+            pulse.onUpdate(() => {
+                pulse.t += dt() * pulse.speed;
+                if (pulse.t > 1) pulse.t = 0;
+                pulse.pos = p1.lerp(p2, pulse.t);
+                pulse.opacity = Math.sin(pulse.t * Math.PI) * 0.4;
+            });
+        }
 
         PORTFOLIO_DATA.forEach((item, index) => {
             const angle = (index / PORTFOLIO_DATA.length) * Math.PI * 2;
