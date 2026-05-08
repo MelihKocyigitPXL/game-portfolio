@@ -14,40 +14,40 @@ export default function() {
             { 
                 name: "Berdan", 
                 pos: vec2(width() * 0.15, height() * 0.45), 
-                color: rgb(255, 80, 80), // Red
+                color: rgb(255, 80, 80), 
                 testimonial: "Berdan: 'Ik heb hem leren kennen tijdens het IT-project en het klikte meteen. Hij is een sterk teamlid om mee te werken en bovendien iemand op wie je binnen een team altijd kunt vertrouwen.'", 
                 link: "https://sites.google.com/view/berdan-kaya-i-talent-portfolio/homepage"
             },
             { 
                 name: "Cas", 
                 pos: vec2(width() * 0.29, height() * 0.45), 
-                color: rgb(80, 200, 255), // Cyan/Blue
+                color: rgb(80, 200, 255), 
                 testimonial: "Cas: 'Ik heb hem leren kennen als iemand die betrouwbaar is en zijn werk met de nodige zorg en toewijding uitvoert. Hij werkt gestructureerd, denkt mee en is een aangename persoon om mee samen te werken.'",
                 link: "https://cas-vermeer-portfolio.vercel.app/"
             },
             { 
                 name: "Christophe", 
                 pos: vec2(width() * 0.43, height() * 0.45), 
-                color: rgb(255, 255, 80), // Yellow
+                color: rgb(255, 255, 80), 
                 testimonial: "Christophe: 'Wat ik sterk vind aan Melih, is dat hij altijd wel iets interessants te vertellen heeft. Hij combineert dat met een sterke werkhouding en veel kennis van wat hij doet.'", 
                 link: "https://christophethuwis.com/" 
             },
             { 
                 name: "Ferre", 
                 pos: vec2(width() * 0.57, height() * 0.45), 
-                color: rgb(80, 255, 80), // Green
+                color: rgb(80, 255, 80), 
                 testimonial: "Ferre: 'Hij is iemand die altijd 100% geeft en door die inzet weet je dat er altijd een resultaat gaat zijn waar je trots op kan zijn'" 
             },
             { 
                 name: "Lucas", 
                 pos: vec2(width() * 0.71, height() * 0.45), 
-                color: rgb(255, 80, 255), // Magenta
+                color: rgb(255, 80, 255), 
                 testimonial: "Lucas: 'Wat ik het meest waardeer aan Melih is zijn motivatie en de manier waarop hij altijd met nieuwe ideeën komt. Hij is betrouwbaar, werkt hard en zorgt ervoor dat samenwerken altijd vlot en aangenaam verloopt. Je merkt echt dat hij passie heeft voor wat hij doet.'" 
             },
             { 
                 name: "Safri", 
                 pos: vec2(width() * 0.85, height() * 0.45), 
-                color: rgb(255, 150, 50), // Orange
+                color: rgb(255, 150, 50), 
                 testimonial: "Safri: 'Ik waardeer aan jou dat je veel mee bent met wat er in de wereld gebeurt en daar ook boeiend over kan vertellen. Je brengt interessante inzichten en nieuwe ideeën in de groep, en tegelijk maak je de sfeer vaak wat luchtiger.'",
                 link: "https://www.sarbjitsingh.be/"
             },

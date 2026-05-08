@@ -17,7 +17,6 @@ export default function() {
             color(rgb(200, 200, 255)),
         ]);
 
-        // Draw a central bus (Kafka)
         const bus = add([
             rect(700, 40, { radius: 10 }),
             pos(width() / 2, height() / 2 - 20),
@@ -35,7 +34,6 @@ export default function() {
             z(-14),
         ]);
 
-        // Architecture Nodes
         const nodes = [
             { name: "Java App", pos: vec2(width() * 0.2, height() * 0.25) },
             { name: "Docker Container", pos: vec2(width() * 0.5, height() * 0.15) },
@@ -45,7 +43,6 @@ export default function() {
         ];
 
         nodes.forEach((n) => {
-            // Draw connection to bus
             const busY = height() / 2 - 20;
             const h = Math.abs(n.pos.y - busY);
             add([
@@ -73,19 +70,19 @@ export default function() {
                 z(-9),
             ]);
 
-            // Add pulsing effect for data flow
             nodeObj.onUpdate(() => {
                 if (chance(0.01)) {
                     nodeObj.color = rgb(50, 150, 50);
                     wait(0.2, () => nodeObj.color = rgb(20, 30, 20));
-                    spawnPacket(n.pos);
+                    const otherNodes = nodes.filter(node => node.name !== n.name);
+                    const targetNode = otherNodes[Math.floor(Math.random() * otherNodes.length)];
+                    spawnPacket(n.pos, targetNode.pos);
                 }
             });
         });
 
-        function spawnPacket(startPos) {
-            const isGoingToBus = startPos.y !== (height() / 2 - 20);
-            const targetY = isGoingToBus ? (height() / 2 - 20) : (chance(0.5) ? height() * 0.15 : height() * 0.6);
+        function spawnPacket(startPos, endPos) {
+            const busY = height() / 2 - 20;
             
             const p = add([
                 circle(4),
@@ -94,19 +91,15 @@ export default function() {
                 z(-12),
             ]);
             
-            tween(p.pos.y, targetY, 0.5, (val) => p.pos.y = val, easings.easeOutQuad).onEnd(() => {
-                if (isGoingToBus) {
-                    const dir = chance(0.5) ? 1 : -1;
-                    tween(p.pos.x, p.pos.x + dir * rand(100, 200), 0.5, (val) => p.pos.x = val, easings.linear).onEnd(() => {
+            tween(p.pos.y, busY, 0.4, (val) => p.pos.y = val, easings.easeOutQuad).onEnd(() => {
+                tween(p.pos.x, endPos.x, 0.6, (val) => p.pos.x = val, easings.linear).onEnd(() => {
+                    tween(p.pos.y, endPos.y, 0.4, (val) => p.pos.y = val, easings.easeInQuad).onEnd(() => {
                         destroy(p);
                     });
-                } else {
-                    destroy(p);
-                }
+                });
             });
         }
 
-        // Player
         const player = add([
             sprite("bean"),
             pos(width() / 2, height() / 2 + 60),
@@ -122,7 +115,6 @@ export default function() {
         onKeyDown("up", () => player.move(0, -SPEED));
         onKeyDown("down", () => player.move(0, SPEED));
 
-        // Bottom UI for text
         const infoBox = add([
             rect(width() * 0.9, 130, { radius: 10 }),
             pos(width() / 2, height() - 75),
@@ -171,7 +163,6 @@ export default function() {
                 go("hub");
             }
             
-            // Constrain player
             if (player.pos.x < 15) player.pos.x = 15;
             if (player.pos.x > width() - 15) player.pos.x = width() - 15;
             if (player.pos.y < 15) player.pos.y = 15;
