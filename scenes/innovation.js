@@ -159,14 +159,11 @@ export default function() {
         });
 
         onUpdate(() => {
+            player.pos.x = clamp(player.pos.x, 20, width() - 20);
+            player.pos.y = clamp(player.pos.y, 20, height() - 20);
             if (onReturn && isKeyPressed("e")) {
                 go("hub");
             }
-            
-            if (player.pos.x < 15) player.pos.x = 15;
-            if (player.pos.x > width() - 15) player.pos.x = width() - 15;
-            if (player.pos.y < 15) player.pos.y = 15;
-            if (player.pos.y > height() - 160) player.pos.y = height() - 160;
         });
     });
 }

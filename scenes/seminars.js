@@ -194,6 +194,8 @@ export default function() {
         });
 
         onUpdate(() => {
+            player.pos.x = clamp(player.pos.x, 20, width() - 20);
+            player.pos.y = clamp(player.pos.y, 20, height() - 20);
             updateCanvasPosition();
             if (onReturn && isKeyPressed("e")) {
                 cleanup();

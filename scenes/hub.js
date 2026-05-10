@@ -193,7 +193,7 @@ export default function(PORTFOLIO_DATA) {
         const rope = add([
             pos(ropeX, 0),
             rect(6, 160),
-            color(rgb(120, 80, 40)),
+            color(rgb(177, 174, 202)),
             outline(2, rgb(60, 40, 20)),
             anchor("top"),
             z(10),
@@ -421,6 +421,10 @@ export default function(PORTFOLIO_DATA) {
                 currentPlanetSpin = lerp(currentPlanetSpin, BASE_PLANET_SPIN, dt() * 3);
                 world.angle += spinSpeed * dt();
             }
+
+            // Boundary checks
+            player.pos.x = clamp(player.pos.x, 20, width() - 20);
+            player.pos.y = clamp(player.pos.y, 20, height() - 20);
         });
 
         onKeyPress("e", () => {
