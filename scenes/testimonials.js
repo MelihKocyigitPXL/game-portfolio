@@ -1,3 +1,5 @@
+import { state } from "../globalState.js";
+
 export default function() {
     scene("testimonials", (info) => {
         setGravity(0);
@@ -87,11 +89,7 @@ export default function() {
             { activeNPC: null }
         ]);
 
-        const SPEED = 400;
-        onKeyDown("left", () => player.move(-SPEED, 0));
-        onKeyDown("right", () => player.move(SPEED, 0));
-        onKeyDown("up", () => player.move(0, -SPEED));
-        onKeyDown("down", () => player.move(0, SPEED));
+        state.attachXP(player, 400);
 
         const dialogueBox = add([
             rect(width() * 0.9, 160, { radius: 8 }),

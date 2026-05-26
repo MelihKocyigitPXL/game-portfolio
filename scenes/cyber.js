@@ -1,3 +1,5 @@
+import { state } from "../globalState.js";
+
 export default function() {
     scene("cyber", (info) => {
         setGravity(0);
@@ -70,11 +72,7 @@ export default function() {
             { activeTerminal: false }
         ]);
 
-        const SPEED = 400;
-        onKeyDown("left", () => player.move(-SPEED, 0));
-        onKeyDown("right", () => player.move(SPEED, 0));
-        onKeyDown("up", () => player.move(0, -SPEED));
-        onKeyDown("down", () => player.move(0, SPEED));
+        state.attachXP(player, 400);
 
         const prompt = add([
             text("", { size: 16 }),

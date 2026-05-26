@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { state } from "../globalState.js";
 
 export default function(PORTFOLIO_DATA) {
     scene("hub", () => {
@@ -50,6 +51,12 @@ export default function(PORTFOLIO_DATA) {
                 kaplayCanvas.style.backgroundColor = "transparent";
             }
             document.body.appendChild(threeCanvas);
+
+            // Initially hide the globe canvas if level < 1
+            if (state.level < 1) {
+                threeCanvas.style.opacity = "0";
+                threeCanvas.style.transition = "opacity 1s ease-in-out";
+            }
 
             planetGroup = new THREE.Group();
             planetGroup.position.y = -520;
@@ -183,6 +190,7 @@ export default function(PORTFOLIO_DATA) {
         ]);
 
         smallPlanetGroup.onUpdate(() => {
+            smallPlanetGroup.hidden = state.level < 2;
             if (isSpinning) {
                 smallPlanetRing.angle += dt() * 1000;
                 smallPlanetCore.angle -= dt() * 500;
@@ -197,6 +205,7 @@ export default function(PORTFOLIO_DATA) {
             outline(2, rgb(60, 40, 20)),
             anchor("top"),
             z(10),
+            opacity(state.level >= 3 ? 1 : 0),
         ]);
 
         const handle = add([
@@ -207,7 +216,8 @@ export default function(PORTFOLIO_DATA) {
             area(),
             anchor("center"),
             z(11),
-            "handle"
+            "handle",
+            opacity(state.level >= 3 ? 1 : 0),
         ]);
 
         const radiusX = 350;
@@ -330,13 +340,9 @@ export default function(PORTFOLIO_DATA) {
             { activePortal: null, onPlanetEgg: false, onRope: false }
         ]);
 
-        const activePortalContacts = new Set();
+        state.attachXP(player, 450);
 
-        const SPEED = 450;
-        onKeyDown("left", () => player.move(-SPEED, 0));
-        onKeyDown("right", () => player.move(SPEED, 0));
-        onKeyDown("up", () => player.move(0, -SPEED));
-        onKeyDown("down", () => player.move(0, SPEED));
+        const activePortalContacts = new Set();
 
         const promptBox = add([
             rect(400, 45, { radius: 10 }),
@@ -357,7 +363,11 @@ export default function(PORTFOLIO_DATA) {
         ]);
 
         const updatePrompt = () => {
-            if (player.onRope) {
+            if (player.onBlackHole && state.level >= 4) {
+                promptBox.opacity = 0.9;
+                promptText.text = "(E) Betreed het Zwarte Gat";
+                promptBox.outline.color = rgb(255, 100, 255);
+            } else if (player.onRope && state.level >= 3) {
                 promptBox.opacity = 0.9;
                 promptText.text = "(E) Trek aan het touw";
                 promptBox.outline.color = rgb(220, 40, 40);
@@ -365,7 +375,7 @@ export default function(PORTFOLIO_DATA) {
                 promptBox.opacity = 0.9;
                 promptText.text = `(E) ${player.activePortal.info.title}`;
                 promptBox.outline.color = rgb(player.activePortal.info.color[0], player.activePortal.info.color[1], player.activePortal.info.color[2]);
-            } else if (player.onPlanetEgg) {
+            } else if (player.onPlanetEgg && state.level >= 2) {
                 promptBox.opacity = 0.9;
                 promptText.text = "(E) Bezoek mysterieuze planeet";
                 promptBox.outline.color = rgb(100, 150, 255);
@@ -409,10 +419,75 @@ export default function(PORTFOLIO_DATA) {
             updatePrompt();
         });
 
+        const blackHoleTrigger = add([
+            circle(40),
+            pos(width() / 2, height() / 2),
+            area(),
+            anchor("center"),
+            opacity(0),
+            "blackhole_trigger",
+        ]);
+
+        const blackHolePortal = add([
+            pos(width() / 2, height() / 2),
+            anchor("center"),
+            z(5),
+        ]);
+
+        const mainCircle = blackHolePortal.add([
+            circle(45),
+            color(rgb(0, 0, 0)),
+            outline(4, rgb(255, 100, 255)),
+            anchor("center"),
+            opacity(1),
+        ]);
+
+        const portalRing = blackHolePortal.add([
+            circle(55),
+            color(rgb(100, 0, 200)),
+            opacity(0.3),
+            anchor("center"),
+            scale(1),
+        ]);
+
+        blackHolePortal.onUpdate(() => {
+            const isVisible = state.level >= 4;
+            blackHolePortal.hidden = !isVisible;
+            
+            if (isVisible) {
+                portalRing.scale = vec2(1 + Math.sin(time() * 4) * 0.2);
+                portalRing.opacity = 0.3 + Math.sin(time() * 2) * 0.1;
+            }
+        });
+
+        player.onCollide("blackhole_trigger", () => {
+            if (state.level >= 4) {
+                player.onBlackHole = true;
+                updatePrompt();
+            }
+        });
+
+        player.onCollideEnd("blackhole_trigger", () => {
+            player.onBlackHole = false;
+            updatePrompt();
+        });
+
         onUpdate(() => {
             updatePrompt();
+            
+            // Check for level up effects
+            if (state.level >= 1 && threeCanvas && threeCanvas.style.opacity === "0") {
+                threeCanvas.style.opacity = "1";
+            }
+            if (state.level >= 2 && smallPlanetGroup.opacity === 0) {
+                smallPlanetGroup.opacity = 1;
+            }
+            if (state.level >= 3 && rope.opacity === 0) {
+                rope.opacity = 1;
+                handle.opacity = 1;
+            }
 
-            if (isSpinning) {
+            if (isSpinning && state.level >= 3) {
                 spinSpeed = lerp(spinSpeed, TARGET_SPIN_SPEED, dt() * 1.5);
                 currentPlanetSpin = lerp(currentPlanetSpin, BOOST_PLANET_SPIN, dt() * 1.5);
                 world.angle += spinSpeed * dt();
@@ -428,7 +503,9 @@ export default function(PORTFOLIO_DATA) {
         });
 
         onKeyPress("e", () => {
-            if (player.onRope) {
+            if (player.onBlackHole && state.level >= 4) {
+                go("blackhole");
+            } else if (player.onRope && state.level >= 3) {
                 isSpinning = !isSpinning;
                 
                 handle.pos.y += 20;
@@ -442,7 +519,7 @@ export default function(PORTFOLIO_DATA) {
                 const specializedScenes = ["testimonials", "intro", "cyber", "fosdem", "xfactor", "seminars", "innovation"];
                 if (specializedScenes.includes(id)) go(id, player.activePortal.info);
                 else go("detail", player.activePortal.info);
-            } else if (player.onPlanetEgg) {
+            } else if (player.onPlanetEgg && state.level >= 2) {
                 go("planet_easter_egg");
             }
         });

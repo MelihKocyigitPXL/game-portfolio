@@ -1,3 +1,5 @@
+import { state } from "../globalState.js";
+
 export default function() {
     scene("innovation", (info) => {
         setGravity(0);
@@ -108,12 +110,7 @@ export default function() {
             color(info.color ? rgb(info.color[0], info.color[1], info.color[2]) : rgb(100, 255, 100)),
         ]);
 
-        const SPEED = 350;
-
-        onKeyDown("left", () => player.move(-SPEED, 0));
-        onKeyDown("right", () => player.move(SPEED, 0));
-        onKeyDown("up", () => player.move(0, -SPEED));
-        onKeyDown("down", () => player.move(0, SPEED));
+        state.attachXP(player, 350);
 
         const infoBox = add([
             rect(width() * 0.9, 130, { radius: 10 }),
